@@ -7,11 +7,10 @@ namespace EifelMono.Tasks.Test
 {
     public class TaskResultStatusOkTests
     {
-        private static async Task<int> TestTaskAsync(CancellationToken cancellationToken)
-        {
-            await Task.Delay(TimeSpan.FromMilliseconds(1), cancellationToken);
-            return 1;
-        }
+#pragma warning disable IDE0060 // Remove unused parameter
+        private static Task<int> TestTaskAsync(CancellationToken cancellationToken)
+            => Task.FromResult(1);
+#pragma warning restore IDE0060 // Remove unused parameter
 
         [Fact]
         public async void Await_Task_throws_an_exception()

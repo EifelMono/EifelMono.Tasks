@@ -32,7 +32,6 @@ namespace EifelMono.Tasks.Test
                         Assert.Equal(TaskResultStatus.Faulted, result.ResultStatus);
                         break;
                 }
-
             }
             catch (Exception ex)
             {

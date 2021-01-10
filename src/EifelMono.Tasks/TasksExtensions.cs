@@ -124,7 +124,7 @@ namespace EifelMono.Tasks
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             var result = thisValue.ResultStatus(cancellationTokenNode);
-            return (result.ResultStatus, thisValue, thisValue.Result);
+            return (result.ResultStatus, thisValue, result.ResultStatus.IsOk() ? thisValue.Result : default);
         }
         #endregion
 
