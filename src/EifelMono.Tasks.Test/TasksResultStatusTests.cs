@@ -61,8 +61,7 @@ namespace EifelMono.Tasks.Test
             async Task<int> Task3Async(CancellationToken token)
             {
                 ctnRoot.Root.Cancel();
-                var result= await Task.Delay(TimeSpan.FromMilliseconds(1), token)
-                    .ResultStatusAsync();
+                await Task.Delay(TimeSpan.FromMilliseconds(1), token);
                 return 1;
             }
             var result = await Task1Async(ctnRoot.Token)
@@ -97,8 +96,7 @@ namespace EifelMono.Tasks.Test
             }
             async Task<int> Task3Async(CancellationToken token)
             {
-                var result = await Task.Delay(TimeSpan.FromMilliseconds(1), token)
-                    .ResultStatusAsync();
+                await Task.Delay(TimeSpan.FromMilliseconds(1), token);
                 return 1;
             }
             var result = await Task1Async(ctnRoot.Token)
