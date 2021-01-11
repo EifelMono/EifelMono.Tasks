@@ -21,15 +21,15 @@ namespace EifelMono.Tasks.Test
             try
             {
                 await task;
-                Assert.True(false, "This branch is wrong");
+                Assert.True(false, "This is wrong");
             }
             catch (OperationCanceledException)
             {
-                Assert.True(false, "This branch is correct");
+                Assert.True(false, "This is wrong");
             }
             catch (Exception)
             {
-                Assert.True(true, "This branch is wrong");
+                Assert.True(true, "This is correct");
             }
         }
 
@@ -51,6 +51,14 @@ namespace EifelMono.Tasks.Test
                 .ResultStatusAsync();
             var result = await task;
             Assert.True(result.IsFaulted());
+            var onCount = 0;
+            result.OnResultState((r) =>
+            {
+                onCount++;
+                if (r.ResultStatus.IsFaulted())
+                    onCount++;
+            }).OnFaulted((r) => onCount++);
+            Assert.Equal(3, onCount);
         }
 
         [Fact]
@@ -63,6 +71,14 @@ namespace EifelMono.Tasks.Test
             Assert.True(task.IsFaulted);
             var result = task.ResultStatus();
             Assert.True(result.IsFaulted());
+            var onCount = 0;
+            result.OnResultState((r) =>
+            {
+                onCount++;
+                if (r.ResultStatus.IsFaulted())
+                    onCount++;
+            }).OnFaulted((r) => onCount++);
+            Assert.Equal(3, onCount);
         }
     }
 }

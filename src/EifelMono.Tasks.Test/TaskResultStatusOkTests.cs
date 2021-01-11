@@ -51,6 +51,14 @@ namespace EifelMono.Tasks.Test
             var result = await task;
             Assert.True(result.IsOk());
             Assert.Equal(1, result.Result);
+            var onCount = 0;
+            result.OnResultState((r) =>
+            {
+                onCount++;
+                if (r.ResultStatus.IsOk())
+                    onCount++;
+            }).OnOk((r) => onCount++);
+            Assert.Equal(3, onCount);
         }
 
         [Fact]
@@ -64,6 +72,14 @@ namespace EifelMono.Tasks.Test
             var result = task.ResultStatus();
             Assert.True(result.IsOk());
             Assert.Equal(1, result.Result);
+            var onCount = 0;
+            result.OnResultState((r) =>
+            {
+                onCount++;
+                if (r.ResultStatus.IsOk())
+                    onCount++;
+            }).OnOk((r) => onCount++);
+            Assert.Equal(3, onCount);
         }
     }
 }

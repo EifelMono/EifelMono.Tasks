@@ -53,10 +53,18 @@ namespace EifelMono.Tasks.Test
                 .ResultStatusAsync();
             var result = await task;
             Assert.True(result.IsCanceled());
+            var onCount = 0;
+            result.OnResultState((r) =>
+            {
+                onCount++;
+                if (r.ResultStatus.IsCanceled())
+                    onCount++;
+            }).OnCanceled((r) => onCount++);
+            Assert.Equal(3, onCount);
         }
 
         [Fact]
-        public async void Await_TaskWhenAny_with_ResultStatus_and_get_StatusResult()
+        public async void Await_TaskWhenAny_with_ResultStatus_and_StatusResult()
         {
             using var cts = new CancellationTokenSource();
             cts.Cancel();
@@ -66,6 +74,14 @@ namespace EifelMono.Tasks.Test
             Assert.True(task.IsCanceled);
             var result = task.ResultStatus();
             Assert.True(result.IsCanceled());
+            var onCount = 0;
+            result.OnResultState((r) =>
+            {
+                onCount++;
+                if (r.ResultStatus.IsCanceled())
+                    onCount++;
+            }).OnCanceled((r) => onCount++);
+            Assert.Equal(3, onCount);
         }
     }
 }
