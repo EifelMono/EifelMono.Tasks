@@ -50,14 +50,14 @@ namespace EifelMono.Tasks.Test
             using var cts = new CancellationTokenSource();
             cts.Cancel();
             var task = TestTaskAsync(cts.Token)
-                .ResultStatusAsync();
+                .AwaitStatusAsync();
             var result = await task;
             Assert.True(result.IsCanceled());
             var onCount = 0;
-            result.OnResultState((r) =>
+            result.OnAwaitStatus((r) =>
             {
                 onCount++;
-                if (r.ResultStatus.IsCanceled())
+                if (r.AwaitStatus.IsCanceled())
                     onCount++;
             }).OnCanceled((r) => onCount++);
             Assert.Equal(3, onCount);
@@ -72,13 +72,13 @@ namespace EifelMono.Tasks.Test
             var resultTask = await Task.WhenAny(task);
             Assert.Equal(task, resultTask);
             Assert.True(task.IsCanceled);
-            var result = task.ResultStatus();
+            var result = task.AwaitStatusFromTask();
             Assert.True(result.IsCanceled());
             var onCount = 0;
-            result.OnResultState((r) =>
+            result.OnAwaitStatus((r) =>
             {
                 onCount++;
-                if (r.ResultStatus.IsCanceled())
+                if (r.AwaitStatus.IsCanceled())
                     onCount++;
             }).OnCanceled((r) => onCount++);
             Assert.Equal(3, onCount);

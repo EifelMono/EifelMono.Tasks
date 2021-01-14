@@ -18,21 +18,21 @@ namespace EifelMono.Tasks.Test
             if (cancelMode == Globals.CancelMode.SourceCancelDirect)
                 ctn.Root.Cancel();
 
-            var result = await Globals.TestTaskDelayAsync(cancelMode, ctn.Root.Source).ResultStatusAsync(ctn);
+            var result = await Globals.TestTaskDelayAsync(cancelMode, ctn.Root.Source).AwaitStatusAsync(ctn);
 
             if (cancelMode == Globals.CancelMode.ThrowException)
             {
-                Assert.True(result.ResultStatus.IsFaulted());
+                Assert.True(result.AwaitStatus.IsFaulted());
             }
             else
             {
-                Assert.True(result.ResultStatus.IsCanceled());
-                Assert.True(result.ResultStatus.IsNodeCanceled());
+                Assert.True(result.AwaitStatus.IsCanceled());
+                Assert.True(result.AwaitStatus.IsNodeCanceled());
 
-                Assert.True(result.ResultStatus.IsRootCanceled());
-                Assert.False(result.ResultStatus.IsBranchCanceled());
-                Assert.False(result.ResultStatus.IsTimeoutCanceled());
-                Assert.False(result.ResultStatus.IsExternalsCanceled());
+                Assert.True(result.AwaitStatus.IsRootCanceled());
+                Assert.False(result.AwaitStatus.IsBranchCanceled());
+                Assert.False(result.AwaitStatus.IsTimeoutCanceled());
+                Assert.False(result.AwaitStatus.IsExternalsCanceled());
             }
         }
 
@@ -47,21 +47,21 @@ namespace EifelMono.Tasks.Test
             if (cancelMode == Globals.CancelMode.SourceCancelDirect)
                 ctn.Branch.Cancel();
 
-            var result = await Globals.TestTaskDelayAsync(cancelMode, ctn.Branch.Source).ResultStatusAsync(ctn);
+            var result = await Globals.TestTaskDelayAsync(cancelMode, ctn.Branch.Source).AwaitStatusAsync(ctn);
 
             if (cancelMode == Globals.CancelMode.ThrowException)
             {
-                Assert.True(result.ResultStatus.IsFaulted());
+                Assert.True(result.AwaitStatus.IsFaulted());
             }
             else
             {
-                Assert.True(result.ResultStatus.IsCanceled());
-                Assert.True(result.ResultStatus.IsNodeCanceled());
+                Assert.True(result.AwaitStatus.IsCanceled());
+                Assert.True(result.AwaitStatus.IsNodeCanceled());
 
-                Assert.False(result.ResultStatus.IsRootCanceled());
-                Assert.True(result.ResultStatus.IsBranchCanceled());
-                Assert.False(result.ResultStatus.IsTimeoutCanceled());
-                Assert.False(result.ResultStatus.IsExternalsCanceled());
+                Assert.False(result.AwaitStatus.IsRootCanceled());
+                Assert.True(result.AwaitStatus.IsBranchCanceled());
+                Assert.False(result.AwaitStatus.IsTimeoutCanceled());
+                Assert.False(result.AwaitStatus.IsExternalsCanceled());
             }
         }
 
@@ -77,21 +77,21 @@ namespace EifelMono.Tasks.Test
             if (cancelMode == Globals.CancelMode.SourceCancelDirect)
                 ctn.BranchTimeout.Cancel();
 
-            var result = await Globals.TestTaskDelayAsync(cancelMode, ctn.BranchTimeout.Source).ResultStatusAsync(ctn);
+            var result = await Globals.TestTaskDelayAsync(cancelMode, ctn.BranchTimeout.Source).AwaitStatusAsync(ctn);
 
             if (cancelMode == Globals.CancelMode.ThrowException)
             {
-                Assert.True(result.ResultStatus.IsFaulted());
+                Assert.True(result.AwaitStatus.IsFaulted());
             }
             else
             {
-                Assert.True(result.ResultStatus.IsCanceled());
-                Assert.True(result.ResultStatus.IsNodeCanceled());
+                Assert.True(result.AwaitStatus.IsCanceled());
+                Assert.True(result.AwaitStatus.IsNodeCanceled());
 
-                Assert.False(result.ResultStatus.IsRootCanceled());
-                Assert.False(result.ResultStatus.IsBranchCanceled());
-                Assert.True(result.ResultStatus.IsTimeoutCanceled());
-                Assert.False(result.ResultStatus.IsExternalsCanceled());
+                Assert.False(result.AwaitStatus.IsRootCanceled());
+                Assert.False(result.AwaitStatus.IsBranchCanceled());
+                Assert.True(result.AwaitStatus.IsTimeoutCanceled());
+                Assert.False(result.AwaitStatus.IsExternalsCanceled());
           
             }
         }
@@ -110,21 +110,21 @@ namespace EifelMono.Tasks.Test
             if (cancelMode == Globals.CancelMode.SourceCancelDirect)
                 external1.Cancel();
 
-            var result = await Globals.TestTaskDelayAsync(cancelMode, external1).ResultStatusAsync(ctn);
+            var result = await Globals.TestTaskDelayAsync(cancelMode, external1).AwaitStatusAsync(ctn);
 
             if (cancelMode == Globals.CancelMode.ThrowException)
             {
-                Assert.True(result.ResultStatus.IsFaulted());
+                Assert.True(result.AwaitStatus.IsFaulted());
             }
             else
             {
-                Assert.True(result.ResultStatus.IsCanceled());
-                Assert.True(result.ResultStatus.IsNodeCanceled());
+                Assert.True(result.AwaitStatus.IsCanceled());
+                Assert.True(result.AwaitStatus.IsNodeCanceled());
 
-                Assert.False(result.ResultStatus.IsRootCanceled());
-                Assert.False(result.ResultStatus.IsBranchCanceled());
-                Assert.False(result.ResultStatus.IsTimeoutCanceled());
-                Assert.True(result.ResultStatus.IsExternalsCanceled());
+                Assert.False(result.AwaitStatus.IsRootCanceled());
+                Assert.False(result.AwaitStatus.IsBranchCanceled());
+                Assert.False(result.AwaitStatus.IsTimeoutCanceled());
+                Assert.True(result.AwaitStatus.IsExternalsCanceled());
             }
         }
     }

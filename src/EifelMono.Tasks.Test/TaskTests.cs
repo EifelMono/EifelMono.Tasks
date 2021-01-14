@@ -20,16 +20,16 @@ namespace EifelMono.Tasks.Test
                     cts.Cancel();
 
                 var result = await Globals.TestTaskDelayAsync(cancelMode, cts)
-                        .ResultStatusAsync().ConfigureAwait(false);
+                        .AwaitStatusAsync().ConfigureAwait(false);
                 switch (cancelMode)
                 {
                     case Globals.CancelMode.SourceCancelDirect:
                     case Globals.CancelMode.SourceCancel:
                     case Globals.CancelMode.TokenThrow:
-                        Assert.Equal(TaskResultStatus.Canceled, result.ResultStatus);
+                        Assert.Equal(AwaitStatus.Canceled, result.AwaitStatus);
                         break;
                     case Globals.CancelMode.ThrowException:
-                        Assert.Equal(TaskResultStatus.Faulted, result.ResultStatus);
+                        Assert.Equal(AwaitStatus.Faulted, result.AwaitStatus);
                         break;
                 }
             }

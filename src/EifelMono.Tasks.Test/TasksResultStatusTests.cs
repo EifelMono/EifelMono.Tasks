@@ -14,24 +14,24 @@ namespace EifelMono.Tasks.Test
             async Task<int> Task1Async(CancellationToken token)
             {
                 using var ctn = new CancellationTokenNode(token);
-                var result = await Task2Async(ctn.Token).ResultStatusAsync(ctn);
+                var result = await Task2Async(ctn.Token).AwaitStatusAsync(ctn);
                 return result.Result;
             }
 
             async Task<int> Task2Async(CancellationToken token)
             {
                 using var ctn = new CancellationTokenNode(token);
-                var result = await Task3Async(ctn.Token).ResultStatusAsync(ctn);
+                var result = await Task3Async(ctn.Token).AwaitStatusAsync(ctn);
                 return result.Result;
 
             }
             async Task<int> Task3Async(CancellationToken token)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(1), token)
-                    .ResultStatusAsync();
+                    .AwaitStatusAsync();
                 return 1;
             }
-            var result = await Task1Async(ctnRoot.Token).ResultStatusAsync(ctnRoot);
+            var result = await Task1Async(ctnRoot.Token).AwaitStatusAsync(ctnRoot);
             Assert.True(result.IsOk());
             Assert.Equal(1, result.Result);
         }
@@ -44,7 +44,7 @@ namespace EifelMono.Tasks.Test
             {
                 using var ctn = new CancellationTokenNode(token);
                 var result = await Task2Async(ctn.Token)
-                        .ResultStatusAsync(ctn);
+                        .AwaitStatusAsync(ctn);
                 result.ThrowIfRootCanceled(ctn);
                 return result.Result;
             }
@@ -53,7 +53,7 @@ namespace EifelMono.Tasks.Test
             {
                 using var ctn = new CancellationTokenNode(token);
                 var result = await Task3Async(ctn.Token)
-                          .ResultStatusAsync(ctn);
+                          .AwaitStatusAsync(ctn);
                 result.ThrowIfRootCanceled(ctn);
                 return result.Result;
 
@@ -65,7 +65,7 @@ namespace EifelMono.Tasks.Test
                 return 1;
             }
             var result = await Task1Async(ctnRoot.Token)
-                .ResultStatusAsync(ctnRoot);
+                .AwaitStatusAsync(ctnRoot);
             Assert.True(result.IsRootCanceled());
         }
 
@@ -77,7 +77,7 @@ namespace EifelMono.Tasks.Test
             {
                 using var ctn = new CancellationTokenNode(token);
                 var result = await Task2Async(ctn.Token)
-                        .ResultStatusAsync(ctn);
+                        .AwaitStatusAsync(ctn);
                 result.ThrowIfRootCanceled(ctn);
                 return result.Result;
             }
@@ -87,7 +87,7 @@ namespace EifelMono.Tasks.Test
                 using var ctn = new CancellationTokenNode(token);
                 ctn.Branch.Cancel();
                 var result = await Task3Async(ctn.Token)
-                          .ResultStatusAsync(ctn);
+                          .AwaitStatusAsync(ctn);
                 result.ThrowIfRootCanceled(ctn);
                 if (result.IsBranchCanceled())
                     return 2;
@@ -100,7 +100,7 @@ namespace EifelMono.Tasks.Test
                 return 1;
             }
             var result = await Task1Async(ctnRoot.Token)
-                .ResultStatusAsync(ctnRoot);
+                .AwaitStatusAsync(ctnRoot);
             Assert.True(result.IsOk());
             Assert.Equal(2, result.Result);
         }

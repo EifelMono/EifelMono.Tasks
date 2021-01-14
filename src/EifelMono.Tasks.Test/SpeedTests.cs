@@ -44,7 +44,7 @@ namespace EifelMono.Tasks.Test
             using var cts = new CancellationTokenSource();
             for (var i = 0; i < Loops; i++)
             {
-                var result = await TestTaskSpeedAsync(cts.Token).ResultStatusAsync();
+                var result = await TestTaskSpeedAsync(cts.Token).AwaitStatusAsync();
                 Assert.Equal(1, result.Result);
             }
             stopwatch.Stop();
@@ -76,7 +76,7 @@ namespace EifelMono.Tasks.Test
             using var ctn = new CancellationTokenNode();
             for (var i = 0; i < Loops; i++)
             {
-                var result = await TestTaskSpeedAsync(ctn.Token).ResultStatusAsync(ctn);
+                var result = await TestTaskSpeedAsync(ctn.Token).AwaitStatusAsync(ctn);
                 Assert.Equal(1, result.Result);
             }
             stopwatch.Stop();

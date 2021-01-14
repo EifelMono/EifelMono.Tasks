@@ -18,8 +18,8 @@ namespace EifelMono.Tasks.Test
                 tcs.SetCanceled();
             });
 
-            var result = await tcs.Task.ResultStatusAsync();
-            Assert.True(result.ResultStatus.IsCanceled());
+            var result = await tcs.Task.AwaitStatusAsync();
+            Assert.True(result.AwaitStatus.IsCanceled());
         }
     }
 }

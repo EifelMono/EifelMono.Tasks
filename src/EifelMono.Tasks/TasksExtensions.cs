@@ -5,210 +5,210 @@ namespace EifelMono.Tasks
 {
     public static class TasksExtensions
     {
-        #region ResultStatusOnlyFrom......
-        internal static TaskResultStatus
-            ResultStatusOnlyFromTask(this Task thisValue)
+        #region AwaitStatusOnlyFromTask......
+        internal static AwaitStatus
+            AwaitStatusOnlyFromTask(this Task thisValue)
         {
             var result = thisValue.Status switch
             {
-                TaskStatus.Canceled => TaskResultStatus.Canceled,
-                TaskStatus.Faulted => TaskResultStatus.Faulted,
-                TaskStatus.RanToCompletion => TaskResultStatus.Ok,
-                _ => TaskResultStatus.LookAtTaskDotStatusForMore
+                TaskStatus.Canceled => AwaitStatus.Canceled,
+                TaskStatus.Faulted => AwaitStatus.Faulted,
+                TaskStatus.RanToCompletion => AwaitStatus.Ok,
+                _ => AwaitStatus.LookAtTaskDotStatusForMore
             };
             if (result.IsFaulted())
             {
                 foreach (var exception in thisValue?.Exception.InnerExceptions)
                 {
                     if (exception is OperationCanceledException)
-                        result.Include(TaskResultStatus.Canceled);
+                        result.Include(AwaitStatus.Canceled);
                     if (exception is OperationRootCanceledException)
-                        result.Include(TaskResultStatus.RootCanceled);
+                        result.Include(AwaitStatus.RootCanceled);
                 }
             }
             return result;
         }
 
-        internal static TaskResultStatus
-           ResultStatusOnlyFromCancellationTokenNode(this CancellationTokenNode thisValue, TaskResultStatus taskResultStatus)
+        internal static AwaitStatus
+           AwaitStatusOnlyFromCancellationTokenNode(this CancellationTokenNode thisValue, AwaitStatus awaitStatus)
         {
-            var result = taskResultStatus;
-            if (taskResultStatus.IsCanceled())
+            var result = awaitStatus;
+            if (awaitStatus.IsCanceled())
             {
                 if (thisValue.Node.IsCanceled)
-                    result = taskResultStatus.Include(TaskResultStatus.NodeCanceled);
+                    result = awaitStatus.Include(AwaitStatus.NodeCanceled);
                 if (thisValue.Root.IsCanceled)
-                    result = taskResultStatus.Include(TaskResultStatus.RootCanceled);
+                    result = awaitStatus.Include(AwaitStatus.RootCanceled);
                 if (thisValue.Branch.IsCanceled)
-                    result = taskResultStatus.Include(TaskResultStatus.BranchCanceled);
+                    result = awaitStatus.Include(AwaitStatus.BranchCanceled);
                 if (thisValue.BranchTimeout.IsCanceled)
-                    result = taskResultStatus.Include(TaskResultStatus.TimeoutCanceled);
+                    result = awaitStatus.Include(AwaitStatus.TimeoutCanceled);
                 if (thisValue.BranchExternals.IsCanceled)
-                    result = taskResultStatus.Include(TaskResultStatus.ExternalsCanceled);
+                    result = awaitStatus.Include(AwaitStatus.ExternalsCanceled);
             }
             return result;
         }
         #endregion
 
-        #region ResultStatus
-        public static (TaskResultStatus ResultStatus, Task Task)
-            ResultStatus(this Task thisValue)
+        #region AwaitStatusFromTask
+        public static (AwaitStatus AwaitStatus, Task Task)
+            AwaitStatusFromTask(this Task thisValue)
         {
-            var resultStatus = thisValue.ResultStatusOnlyFromTask();
-            return (resultStatus, thisValue);
+            var awaitStatus = thisValue.AwaitStatusOnlyFromTask();
+            return (awaitStatus, thisValue);
         }
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            ResultStatus<TResult>(this Task<TResult> thisValue)
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            AwaitStatusFromTask<TResult>(this Task<TResult> thisValue)
         {
-            var resultStatus = thisValue.ResultStatusOnlyFromTask();
-            return (resultStatus, thisValue, resultStatus == TaskResultStatus.Ok ? thisValue.Result : default);
+            var awaitStatus = thisValue.AwaitStatusOnlyFromTask();
+            return (awaitStatus, thisValue, awaitStatus.IsOk() ? thisValue.Result : default);
         }
 
-        public static (TaskResultStatus ResultStatus, Task Task)
-            ResultStatus(this Task thisValue, CancellationTokenNode cancellationTokenNode)
+        public static (AwaitStatus AwaitStatus, Task Task)
+            AwaitStatusFromTask(this Task thisValue, CancellationTokenNode cancellationTokenNode)
         {
-            var result = thisValue.ResultStatus();
-            result.ResultStatus = cancellationTokenNode.ResultStatusOnlyFromCancellationTokenNode(result.ResultStatus);
+            var result = thisValue.AwaitStatusFromTask();
+            result.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(result.AwaitStatus);
             return result;
         }
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            ResultStatus<TResult>(this Task<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            AwaitStatusFromTask<TResult>(this Task<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
         {
-            var result = thisValue.ResultStatus();
-            result.ResultStatus = cancellationTokenNode.ResultStatusOnlyFromCancellationTokenNode(result.ResultStatus);
+            var result = thisValue.AwaitStatusFromTask();
+            result.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(result.AwaitStatus);
             return result;
         }
 
-        public static (TaskResultStatus ResultStatus, Task Task)
-            ResultStatus(this (TaskResultStatus ResultStatus, Task Task) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static (AwaitStatus AwaitStatus, Task Task)
+            AwaitStatusFromTask(this (AwaitStatus AwaitStatus, Task Task) thisValue, CancellationTokenNode cancellationTokenNode)
         {
-            thisValue.ResultStatus = cancellationTokenNode.ResultStatusOnlyFromCancellationTokenNode(thisValue.ResultStatus);
+            thisValue.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(thisValue.AwaitStatus);
             return thisValue;
         }
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            ResultStatus<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            AwaitStatusFromTask<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, CancellationTokenNode cancellationTokenNode)
         {
-            thisValue.ResultStatus = cancellationTokenNode.ResultStatusOnlyFromCancellationTokenNode(thisValue.ResultStatus);
+            thisValue.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(thisValue.AwaitStatus);
             return thisValue;
         }
         #endregion
 
-        #region ResultStatusAsync
-        public static async Task<(TaskResultStatus ResultStatus, Task Task)>
-            ResultStatusAsync(this Task thisValue)
+        #region AwaitStatusAsync
+        public static async Task<(AwaitStatus AwaitStatus, Task Task)>
+            AwaitStatusAsync(this Task thisValue)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
-            return thisValue.ResultStatus();
+            return thisValue.AwaitStatusFromTask();
         }
 
-        public static async Task<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)>
-            ResultStatusAsync<TResult>(this Task<TResult> thisValue)
+        public static async Task<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)>
+            AwaitStatusAsync<TResult>(this Task<TResult> thisValue)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
-            return thisValue.ResultStatus();
+            return thisValue.AwaitStatusFromTask();
         }
 
-        public static async Task<(TaskResultStatus ResultStatus, Task Task)>
-            ResultStatusAsync(this Task thisValue, CancellationTokenNode cancellationTokenNode)
+        public static async Task<(AwaitStatus AwaitStatus, Task Task)>
+            AwaitStatusAsync(this Task thisValue, CancellationTokenNode cancellationTokenNode)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
-            var result = thisValue.ResultStatus(cancellationTokenNode);
-            return (result.ResultStatus, thisValue);
+            var result = thisValue.AwaitStatusFromTask(cancellationTokenNode);
+            return (result.AwaitStatus, thisValue);
         }
 
-        public static async Task<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)>
-            ResultStatusAsync<TResult>(this Task<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
+        public static async Task<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)>
+            AwaitStatusAsync<TResult>(this Task<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
-            var result = thisValue.ResultStatus(cancellationTokenNode);
-            return (result.ResultStatus, thisValue, result.ResultStatus.IsOk() ? thisValue.Result : default);
+            var result = thisValue.AwaitStatusFromTask(cancellationTokenNode);
+            return (result.AwaitStatus, thisValue, result.AwaitStatus.IsOk() ? thisValue.Result : default);
         }
         #endregion
 
-        #region Shorten the ResultStatus query ...
+        #region Shorten the AwaitStatus query ...
 
         #region IsOk
         public static bool
-            IsOk(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsOk();
+            IsOk(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsOk();
         public static bool
-            IsOk<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsOk();
+            IsOk<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsOk();
         #endregion
 
         #region IsFaulted
         public static bool
-            IsFaulted(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsFaulted();
+            IsFaulted(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsFaulted();
         public static bool
-            IsFaulted<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsFaulted();
+            IsFaulted<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsFaulted();
         #endregion
 
         #region IsLookAtTaskDotStatusForMore
         public static bool
-            IsLookAtTaskDotStatusForMore(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsLookAtTaskDotStatusForMore();
+            IsLookAtTaskDotStatusForMore(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsLookAtTaskDotStatusForMore();
         public static bool
-            IsLookAtTaskDotStatusForMore<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsLookAtTaskDotStatusForMore();
+            IsLookAtTaskDotStatusForMore<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsLookAtTaskDotStatusForMore();
         #endregion
 
         #region IsCanceled
         public static bool
-            IsCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsCanceled();
+            IsCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsCanceled();
         public static bool
-            IsCanceled<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsCanceled();
+            IsCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsCanceled();
         #endregion
 
         #region IsNodeCanceled
         public static bool
-            IsNodeCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsNodeCanceled();
+            IsNodeCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsNodeCanceled();
         public static bool
-            IsNodeCanceled<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsNodeCanceled();
+            IsNodeCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsNodeCanceled();
         #endregion
 
         #region IsRootCanceled
         public static bool
-            IsRootCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsRootCanceled();
+            IsRootCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsRootCanceled();
         public static bool
-            IsRootCanceled<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsRootCanceled();
+            IsRootCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsRootCanceled();
         #endregion
 
         #region IsBranchCanceled
         public static bool
-            IsBranchCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsBranchCanceled();
+            IsBranchCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsBranchCanceled();
         public static bool
-            IsBranchCanceled<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsBranchCanceled();
+            IsBranchCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsBranchCanceled();
         #endregion
 
         #region IsTimeoutCanceled
         public static bool
-            IsTimeoutCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsTimeoutCanceled();
+            IsTimeoutCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsTimeoutCanceled();
         public static bool
-            IsTimeoutCanceled<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsTimeoutCanceled();
+            IsTimeoutCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsTimeoutCanceled();
         #endregion
 
         #region IsExternalsCanceled
         public static bool
-            IsExternalsCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue)
-                => thisValue.ResultStatus.IsExternalsCanceled();
+            IsExternalsCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+                => thisValue.AwaitStatus.IsExternalsCanceled();
         public static bool
-            IsExternalsCanceled<TResult>(this (TaskResultStatus ResultStatus, Task Task, TResult Result) thisValue)
-                => thisValue.ResultStatus.IsExternalsCanceled();
+            IsExternalsCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+                => thisValue.AwaitStatus.IsExternalsCanceled();
         #endregion
 
         #endregion
@@ -216,128 +216,128 @@ namespace EifelMono.Tasks
         #region On ResultState ...
 
         #region OnResultState
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnResultState(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action, TaskResultStatus resultStatus = default)
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnAwaitStatus(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action, AwaitStatus awaitStatus = default)
         {
-            if (resultStatus == default || thisValue.ResultStatus.Contains(resultStatus))
+            if (awaitStatus == default || thisValue.AwaitStatus.Contains(awaitStatus))
                 action?.Invoke(thisValue);
             return thisValue;
         }
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnResultState<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action, TaskResultStatus resultStatus = default)
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnAwaitStatus<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action, AwaitStatus awaitStatus = default)
         {
-            if (resultStatus == default || thisValue.ResultStatus.Contains(resultStatus))
+            if (awaitStatus == default || thisValue.AwaitStatus.Contains(awaitStatus))
                 action?.Invoke(thisValue);
             return thisValue;
         }
         #endregion
 
         #region OnOk
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnOk(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.Ok);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnOk(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.Ok);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnOk<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.Ok);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnOk<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.Ok);
         #endregion
 
         #region OnFaulted
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnFaulted(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.Faulted);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnFaulted(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.Faulted);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnFaulted<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.Faulted);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnFaulted<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.Faulted);
         #endregion
 
         #region OnLookAtTaskDotStatusForMore
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnLookAtTaskDotStatusForMore(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.LookAtTaskDotStatusForMore);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnLookAtTaskDotStatusForMore(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.LookAtTaskDotStatusForMore);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnLookAtTaskDotStatusForMore<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.LookAtTaskDotStatusForMore);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnLookAtTaskDotStatusForMore<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.LookAtTaskDotStatusForMore);
         #endregion
 
         #region OnCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.Canceled);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.Canceled);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnCanceled<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.Canceled);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnCanceled<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.Canceled);
         #endregion
 
         #region OnNodeCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnNodeCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.NodeCanceled);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnNodeCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.NodeCanceled);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnNodeCanceled<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.NodeCanceled);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnNodeCanceled<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.NodeCanceled);
         #endregion
 
         #region OnRootCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnRootCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.RootCanceled);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnRootCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.RootCanceled);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnRootCanceled<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.RootCanceled);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnRootCanceled<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.RootCanceled);
         #endregion
 
         #region OnBranchCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnBranchCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.BranchCanceled);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnBranchCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.BranchCanceled);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnBranchCanceled<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.BranchCanceled);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnBranchCanceled<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.BranchCanceled);
         #endregion
 
         #region OnTimeoutCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnTimeoutCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.TimeoutCanceled);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnTimeoutCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.TimeoutCanceled);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnTimeoutCancele<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.TimeoutCanceled);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnTimeoutCancele<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.TimeoutCanceled);
         #endregion
 
         #region OnExternalsCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            OnExternalsCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, Action<(TaskResultStatus ResultStatus, Task Task)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.ExternalsCanceled);
+        public static (AwaitStatus AwaitStatus, Task Task)
+            OnExternalsCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.ExternalsCanceled);
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            OnExternalsCanceled<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, Action<(TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)> action)
-                => thisValue.OnResultState(action, TaskResultStatus.ExternalsCanceled);
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            OnExternalsCanceled<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, Action<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)> action)
+                => thisValue.OnAwaitStatus(action, AwaitStatus.ExternalsCanceled);
         #endregion
 
         #endregion
 
         #region ThrowIfRootCanceled
-        public static (TaskResultStatus ResultStatus, Task Task)
-            ThrowIfRootCanceled(this (TaskResultStatus ResultStatus, Task Task) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static (AwaitStatus AwaitStatus, Task Task)
+            ThrowIfRootCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, CancellationTokenNode cancellationTokenNode)
         {
-            if (thisValue.ResultStatus.IsRootCanceled())
+            if (thisValue.AwaitStatus.IsRootCanceled())
                 throw new OperationRootCanceledException(cancellationTokenNode.Root.Token);
             return thisValue;
         }
 
-        public static (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result)
-            ThrowIfRootCanceled<TResult>(this (TaskResultStatus ResultStatus, Task<TResult> Task, TResult Result) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+            ThrowIfRootCanceled<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, CancellationTokenNode cancellationTokenNode)
         {
-            if (thisValue.ResultStatus.IsRootCanceled())
+            if (thisValue.AwaitStatus.IsRootCanceled())
                 throw new OperationRootCanceledException(cancellationTokenNode.Root.Token);
             return thisValue;
         }
@@ -345,10 +345,10 @@ namespace EifelMono.Tasks
 
         #region FireAndForget
         public static async void FireAndForget(this Task thisValue)
-            => await thisValue.ResultStatusAsync().ConfigureAwait(false);
+            => await thisValue.AwaitStatusAsync().ConfigureAwait(false);
 
         public static async void FireAndForget<TResult>(this Task<TResult> thisValue)
-            => await thisValue.ResultStatusAsync().ConfigureAwait(false);
+            => await thisValue.AwaitStatusAsync().ConfigureAwait(false);
         #endregion
     }
 }
