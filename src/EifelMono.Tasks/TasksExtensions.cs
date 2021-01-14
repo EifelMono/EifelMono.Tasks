@@ -51,21 +51,21 @@ namespace EifelMono.Tasks
         #endregion
 
         #region AwaitStatusFromTask
-        public static (AwaitStatus AwaitStatus, Task Task)
+        public static AwaitStatusTask
             AwaitStatusFromTask(this Task thisValue)
         {
             var awaitStatus = thisValue.AwaitStatusOnlyFromTask();
-            return (awaitStatus, thisValue);
+            return new (awaitStatus, thisValue);
         }
 
-        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+        public static AwaitStatusTaskResult<TResult>
             AwaitStatusFromTask<TResult>(this Task<TResult> thisValue)
         {
             var awaitStatus = thisValue.AwaitStatusOnlyFromTask();
-            return (awaitStatus, thisValue, awaitStatus.IsOk() ? thisValue.Result : default);
+            return new (awaitStatus, thisValue, awaitStatus.IsOk() ? thisValue.Result : default);
         }
 
-        public static (AwaitStatus AwaitStatus, Task Task)
+        public static AwaitStatusTask
             AwaitStatusFromTask(this Task thisValue, CancellationTokenNode cancellationTokenNode)
         {
             var result = thisValue.AwaitStatusFromTask();
@@ -73,7 +73,7 @@ namespace EifelMono.Tasks
             return result;
         }
 
-        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
+        public static AwaitStatusTaskResult<TResult>
             AwaitStatusFromTask<TResult>(this Task<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
         {
             var result = thisValue.AwaitStatusFromTask();
@@ -81,15 +81,15 @@ namespace EifelMono.Tasks
             return result;
         }
 
-        public static (AwaitStatus AwaitStatus, Task Task)
-            AwaitStatusFromTask(this (AwaitStatus AwaitStatus, Task Task) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static AwaitStatusTask
+            AwaitStatusFromTask(this AwaitStatusTask thisValue, CancellationTokenNode cancellationTokenNode)
         {
             thisValue.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(thisValue.AwaitStatus);
             return thisValue;
         }
 
-        public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
-            AwaitStatusFromTask<TResult>(this (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static AwaitStatusTaskResult<TResult>
+            AwaitStatusFromTask<TResult>(this AwaitStatusTaskResult<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
         {
             thisValue.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(thisValue.AwaitStatus);
             return thisValue;
@@ -97,34 +97,34 @@ namespace EifelMono.Tasks
         #endregion
 
         #region AwaitStatusAsync
-        public static async Task<(AwaitStatus AwaitStatus, Task Task)>
+        public static async Task<AwaitStatusTask>
             AwaitStatusAsync(this Task thisValue)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             return thisValue.AwaitStatusFromTask();
         }
 
-        public static async Task<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)>
+        public static async Task<AwaitStatusTaskResult<TResult>>
             AwaitStatusAsync<TResult>(this Task<TResult> thisValue)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             return thisValue.AwaitStatusFromTask();
         }
 
-        public static async Task<(AwaitStatus AwaitStatus, Task Task)>
+        public static async Task<AwaitStatusTask>
             AwaitStatusAsync(this Task thisValue, CancellationTokenNode cancellationTokenNode)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             var result = thisValue.AwaitStatusFromTask(cancellationTokenNode);
-            return (result.AwaitStatus, thisValue);
+            return new (result.AwaitStatus, thisValue);
         }
 
-        public static async Task<(AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)>
+        public static async Task<AwaitStatusTaskResult<TResult>>
             AwaitStatusAsync<TResult>(this Task<TResult> thisValue, CancellationTokenNode cancellationTokenNode)
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             var result = thisValue.AwaitStatusFromTask(cancellationTokenNode);
-            return (result.AwaitStatus, thisValue, result.AwaitStatus.IsOk() ? thisValue.Result : default);
+            return new (result.AwaitStatus, thisValue, result.AwaitStatus.IsOk() ? thisValue.Result : default);
         }
         #endregion
 
@@ -132,82 +132,82 @@ namespace EifelMono.Tasks
 
         #region IsOk
         public static bool
-            IsOk(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsOk(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsOk();
         public static bool
-            IsOk<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsOk<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsOk();
         #endregion
 
         #region IsFaulted
         public static bool
-            IsFaulted(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsFaulted(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsFaulted();
         public static bool
-            IsFaulted<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsFaulted<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsFaulted();
         #endregion
 
         #region IsLookAtTaskDotStatusForMore
         public static bool
-            IsLookAtTaskDotStatusForMore(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsLookAtTaskDotStatusForMore(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsLookAtTaskDotStatusForMore();
         public static bool
-            IsLookAtTaskDotStatusForMore<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsLookAtTaskDotStatusForMore<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsLookAtTaskDotStatusForMore();
         #endregion
 
         #region IsCanceled
         public static bool
-            IsCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsCanceled(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsCanceled();
         public static bool
-            IsCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsCanceled<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsCanceled();
         #endregion
 
         #region IsNodeCanceled
         public static bool
-            IsNodeCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsNodeCanceled(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsNodeCanceled();
         public static bool
-            IsNodeCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsNodeCanceled<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsNodeCanceled();
         #endregion
 
         #region IsRootCanceled
         public static bool
-            IsRootCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsRootCanceled(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsRootCanceled();
         public static bool
-            IsRootCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsRootCanceled<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsRootCanceled();
         #endregion
 
         #region IsBranchCanceled
         public static bool
-            IsBranchCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsBranchCanceled(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsBranchCanceled();
         public static bool
-            IsBranchCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsBranchCanceled<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsBranchCanceled();
         #endregion
 
         #region IsTimeoutCanceled
         public static bool
-            IsTimeoutCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsTimeoutCanceled(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsTimeoutCanceled();
         public static bool
-            IsTimeoutCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsTimeoutCanceled<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsTimeoutCanceled();
         #endregion
 
         #region IsExternalsCanceled
         public static bool
-            IsExternalsCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue)
+            IsExternalsCanceled(this AwaitStatusTask thisValue)
                 => thisValue.AwaitStatus.IsExternalsCanceled();
         public static bool
-            IsExternalsCanceled<TResult>(this (AwaitStatus AwaitStatus, Task Task, TResult Result) thisValue)
+            IsExternalsCanceled<TResult>(this AwaitStatusTaskResult<TResult> thisValue)
                 => thisValue.AwaitStatus.IsExternalsCanceled();
         #endregion
 
@@ -216,8 +216,8 @@ namespace EifelMono.Tasks
         #region On ResultState ...
 
         #region OnResultState
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnAwaitStatus(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action, AwaitStatus awaitStatus = default)
+        public static AwaitStatusTask
+            OnAwaitStatus(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action, AwaitStatus awaitStatus = default)
         {
             if (awaitStatus == default || thisValue.AwaitStatus.Contains(awaitStatus))
                 action?.Invoke(thisValue);
@@ -234,8 +234,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnOk
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnOk(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnOk(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.Ok);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -244,8 +244,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnFaulted
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnFaulted(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnFaulted(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.Faulted);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -254,8 +254,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnLookAtTaskDotStatusForMore
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnLookAtTaskDotStatusForMore(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnLookAtTaskDotStatusForMore(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.LookAtTaskDotStatusForMore);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -264,8 +264,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnCanceled(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.Canceled);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -274,8 +274,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnNodeCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnNodeCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnNodeCanceled(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.NodeCanceled);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -284,8 +284,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnRootCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnRootCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnRootCanceled(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.RootCanceled);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -294,8 +294,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnBranchCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnBranchCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnBranchCanceled(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.BranchCanceled);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -304,8 +304,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnTimeoutCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnTimeoutCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnTimeoutCanceled(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.TimeoutCanceled);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -314,8 +314,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region OnExternalsCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            OnExternalsCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, Action<(AwaitStatus AwaitStatus, Task Task)> action)
+        public static AwaitStatusTask
+            OnExternalsCanceled(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
                 => thisValue.OnAwaitStatus(action, AwaitStatus.ExternalsCanceled);
 
         public static (AwaitStatus AwaitStatus, Task<TResult> Task, TResult Result)
@@ -326,8 +326,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region ThrowIfRootCanceled
-        public static (AwaitStatus AwaitStatus, Task Task)
-            ThrowIfRootCanceled(this (AwaitStatus AwaitStatus, Task Task) thisValue, CancellationTokenNode cancellationTokenNode)
+        public static AwaitStatusTask
+            ThrowIfRootCanceled(this AwaitStatusTask thisValue, CancellationTokenNode cancellationTokenNode)
         {
             if (thisValue.AwaitStatus.IsRootCanceled())
                 throw new OperationRootCanceledException(cancellationTokenNode.Root.Token);

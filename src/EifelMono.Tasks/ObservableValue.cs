@@ -43,7 +43,7 @@ namespace EifelMono.Tasks
 
         #region protected WaitAsync
 
-        protected async Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(CancellationToken cancellationToken, params T[] waitValues)
+        protected async Task<AwaitStatusTaskResult<T>> WaitAsync(CancellationToken cancellationToken, params T[] waitValues)
         {
             var taskComplitionSource = new TaskCompletionSource<T>();
             var onChanged = OnChanged.Subscribe(newValue =>
@@ -55,7 +55,7 @@ namespace EifelMono.Tasks
             {
                 var newValue = Value;
                 if (waitValues.Contains(newValue))
-                    return (AwaitStatus.Ok, Task.FromResult(newValue), newValue);
+                    return new (AwaitStatus.Ok, Task.FromResult(newValue), newValue);
                 return await taskComplitionSource.AsCancellationTask(cancellationToken)
                                 .AwaitStatusAsync().ConfigureAwait(false);
             }
@@ -66,7 +66,7 @@ namespace EifelMono.Tasks
             }
         }
 
-        protected async Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(CancellationTokenNode cancellationTokenNode, params T[] waitValues)
+        protected async Task<AwaitStatusTaskResult<T>> WaitAsync(CancellationTokenNode cancellationTokenNode, params T[] waitValues)
         {
             var result = await WaitAsync(cancellationTokenNode.Token, waitValues);
             result.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(result.AwaitStatus);
@@ -75,26 +75,26 @@ namespace EifelMono.Tasks
         #endregion
 
         #region public WaitAsync with arguments
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(CancellationToken cancellationToken = default)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(CancellationToken cancellationToken = default)
             => WaitAsync(cancellationToken, new T[0] { });
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, CancellationToken cancellationToken = default)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, CancellationToken cancellationToken = default)
             => WaitAsync(cancellationToken, waitValue1);
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, T waitValue2, CancellationToken cancellationToken = default)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, T waitValue2, CancellationToken cancellationToken = default)
             => WaitAsync(cancellationToken, waitValue1, waitValue2);
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, T waitValue2, T waitValue3, CancellationToken cancellationToken = default)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, T waitValue2, T waitValue3, CancellationToken cancellationToken = default)
             => WaitAsync(cancellationToken, waitValue1, waitValue2, waitValue3);
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, T waitValue2, T waitValue3, T waitValue4, CancellationToken cancellationToken = default)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, T waitValue2, T waitValue3, T waitValue4, CancellationToken cancellationToken = default)
             => WaitAsync(cancellationToken, waitValue1, waitValue2, waitValue3, waitValue4);
 
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(CancellationTokenNode cancellationTokenNode)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(CancellationTokenNode cancellationTokenNode)
             => WaitAsync(cancellationTokenNode, new T[0] { });
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, CancellationTokenNode cancellationTokenNode)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, CancellationTokenNode cancellationTokenNode)
             => WaitAsync(cancellationTokenNode, waitValue1);
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, T waitValue2, CancellationTokenNode cancellationTokenNode)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, T waitValue2, CancellationTokenNode cancellationTokenNode)
             => WaitAsync(cancellationTokenNode, waitValue1, waitValue2);
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, T waitValue2, T waitValue3, CancellationTokenNode cancellationTokenNode)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, T waitValue2, T waitValue3, CancellationTokenNode cancellationTokenNode)
             => WaitAsync(cancellationTokenNode, waitValue1, waitValue2, waitValue3);
-        public Task<(AwaitStatus AwaitStatus, Task<T> Task, T Result)> WaitAsync(T waitValue1, T waitValue2, T waitValue3, T waitValue4, CancellationTokenNode cancellationTokenNode)
+        public Task<AwaitStatusTaskResult<T>> WaitAsync(T waitValue1, T waitValue2, T waitValue3, T waitValue4, CancellationTokenNode cancellationTokenNode)
             => WaitAsync(cancellationTokenNode, waitValue1, waitValue2, waitValue3, waitValue4);
         #endregion
     }
