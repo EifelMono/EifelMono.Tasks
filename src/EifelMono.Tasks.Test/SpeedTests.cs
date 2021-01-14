@@ -38,7 +38,7 @@ namespace EifelMono.Tasks.Test
 
 
         [Fact]
-        public async void Speed_AsyncAWait_With_Cts_ResultStatusAsnc()
+        public async void Speed_AsyncAWait_With_Cts_AwaitStatusAsnc()
         {
             var stopwatch = Stopwatch.StartNew();
             using var cts = new CancellationTokenSource();
@@ -49,7 +49,7 @@ namespace EifelMono.Tasks.Test
             }
             stopwatch.Stop();
             // 654 msec
-            Output.WriteLine($"{nameof(Speed_AsyncAWait_With_Cts_ResultStatusAsnc)}= {stopwatch.ElapsedMilliseconds}");
+            Output.WriteLine($"{nameof(Speed_AsyncAWait_With_Cts_AwaitStatusAsnc)}= {stopwatch.ElapsedMilliseconds}");
         }
 
 
@@ -70,7 +70,7 @@ namespace EifelMono.Tasks.Test
 
 
         [Fact]
-        public async void Speed_AsyncAWait_With_Ctn_ResultStatusAsync()
+        public async void Speed_AsyncAWait_With_Ctn_AwaitStatusAsync()
         {
             var stopwatch = Stopwatch.StartNew();
             using var ctn = new CancellationTokenNode();
@@ -81,7 +81,7 @@ namespace EifelMono.Tasks.Test
             }
             stopwatch.Stop();
             // 695 msec
-            Output.WriteLine($"{nameof(Speed_AsyncAWait_With_Ctn_ResultStatusAsync)}= {stopwatch.ElapsedMilliseconds}");
+            Output.WriteLine($"{nameof(Speed_AsyncAWait_With_Ctn_AwaitStatusAsync)}= {stopwatch.ElapsedMilliseconds}");
         }
 
         [Fact]

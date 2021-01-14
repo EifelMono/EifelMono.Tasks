@@ -5,10 +5,10 @@ using Xunit;
 
 namespace EifelMono.Tasks.Test
 {
-    public class TasksResultStatusTests
+    public class TasksAwaitStatusTests
     {
         [Fact]
-        public async void Test_ResultStatus_Ok()
+        public async void Test_AwaitStatus_Ok()
         {
             using var ctnRoot = new CancellationTokenNode();
             async Task<int> Task1Async(CancellationToken token)
@@ -37,7 +37,7 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void Test_ResultStatus_RootCancel()
+        public async void Test_AwaitStatus_RootCancel()
         {
             using var ctnRoot = new CancellationTokenNode();
             async Task<int> Task1Async(CancellationToken token)
@@ -70,7 +70,7 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void Test_ResultStatus_Root_Task3_Cancel()
+        public async void Test_AwaitStatus_Root_Task3_Cancel()
         {
             using var ctnRoot = new CancellationTokenNode();
             async Task<int> Task1Async(CancellationToken token)

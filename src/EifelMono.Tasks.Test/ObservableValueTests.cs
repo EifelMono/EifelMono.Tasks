@@ -20,7 +20,7 @@ namespace EifelMono.Tasks.Test
              });
 
             var result = await ov.WaitAsync(1);
-            Assert.True(result.ResultStatus.IsOk());
+            Assert.True(result.AwaitStatus.IsOk());
             Assert.Equal(1, result.Result);
             Assert.Equal(1, ov.Value);
         }
@@ -42,11 +42,11 @@ namespace EifelMono.Tasks.Test
             });
 
             var result = await ov.WaitAsync(1, ctn);
-            Assert.True(result.ResultStatus.IsCanceled());
-            Assert.False(result.ResultStatus.IsBranchCanceled());
-            Assert.True(result.ResultStatus.IsTimeoutCanceled());
-            Assert.True(result.ResultStatus.IsNodeCanceled());
-            Assert.False(result.ResultStatus.IsRootCanceled());
+            Assert.True(result.AwaitStatus.IsCanceled());
+            Assert.False(result.AwaitStatus.IsBranchCanceled());
+            Assert.True(result.AwaitStatus.IsTimeoutCanceled());
+            Assert.True(result.AwaitStatus.IsNodeCanceled());
+            Assert.False(result.AwaitStatus.IsRootCanceled());
             Assert.Equal(10, ov.Value);
         }
 
@@ -67,11 +67,11 @@ namespace EifelMono.Tasks.Test
             });
 
             var result = await ov.WaitAsync(1, ctn);
-            Assert.True(result.ResultStatus.IsCanceled());
-            Assert.False(result.ResultStatus.IsBranchCanceled());
-            Assert.True(result.ResultStatus.IsTimeoutCanceled());
-            Assert.True(result.ResultStatus.IsNodeCanceled());
-            Assert.False(result.ResultStatus.IsRootCanceled());
+            Assert.True(result.AwaitStatus.IsCanceled());
+            Assert.False(result.AwaitStatus.IsBranchCanceled());
+            Assert.True(result.AwaitStatus.IsTimeoutCanceled());
+            Assert.True(result.AwaitStatus.IsNodeCanceled());
+            Assert.False(result.AwaitStatus.IsRootCanceled());
             Assert.Equal(10, ov.Value);
         }
     }

@@ -11,7 +11,7 @@ namespace EifelMono.Tasks.Test
         [InlineData(Globals.CancelMode.SourceCancel)]
         [InlineData(Globals.CancelMode.TokenThrow)]
         [InlineData(Globals.CancelMode.ThrowException)]
-        public async void Task_await_with_ResultStatusAsync(Globals.CancelMode cancelMode)
+        public async void Task_await_with_AwaitStatusAsync(Globals.CancelMode cancelMode)
         {
             using var cts = new CancellationTokenSource();
             try

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace EifelMono.Tasks.Test
 {
-    public class TaskResultStatusOkTests
+    public class TaskAwaitStatusOkTests
     {
 #pragma warning disable IDE0060 // Remove unused parameter
         private static Task<int> TestTaskAsync(CancellationToken cancellationToken)
@@ -43,7 +43,7 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void Await_Task_with_ResultStatus_and_no_exception()
+        public async void Await_Task_with_AwaitStatus_and_no_exception()
         {
             using var cts = new CancellationTokenSource();
             var task = TestTaskAsync(cts.Token)
@@ -62,7 +62,7 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void Await_TaskWhenAny_with_ResultStatus_and_get_StatusResult()
+        public async void Await_TaskWhenAny_with_AwaitStatus_and_get_StatusResult()
         {
             using var cts = new CancellationTokenSource();
             var task = TestTaskAsync(cts.Token);
