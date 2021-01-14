@@ -5,7 +5,7 @@ namespace EifelMono.Tasks
 {
     public static class TasksExtensions
     {
-        #region AwaitStatusOnlyFromTask......
+        #region AwaitStatusOnlyFrom......
         internal static AwaitStatus
             AwaitStatusOnlyFromTask(this Task thisValue)
         {
