@@ -43,7 +43,7 @@ namespace EifelMono.Tasks.Test
             await taskCompletionSource.Task;
         }
 
-        public static async Task Test_ThrowException(CancellationToken cancellationToken)
+        public static async Task Test_ThrowException()
         {
             await Test_TaskAsync();
 
@@ -51,7 +51,7 @@ namespace EifelMono.Tasks.Test
         }
         #endregion
 
-        #region AWait Task
+        #region Await Task (Exception is thrown on Cancel)
         [Fact]
         public async void Behavior_Await_TaskDelayAsync()
         {
@@ -128,10 +128,7 @@ namespace EifelMono.Tasks.Test
         public async void Behavior_Await_ThrowExceptionAsync()
         {
             var behaviorOk = false;
-            using var cancellationTokenSource = new CancellationTokenSource();
-            // Cancel direct
-            cancellationTokenSource.Cancel();
-            var task = Test_ThrowException(cancellationTokenSource.Token);
+            var task = Test_ThrowException();
             try
             {
                 await task.ConfigureAwait(true);
@@ -148,7 +145,7 @@ namespace EifelMono.Tasks.Test
         }
         #endregion
 
-        #region AWait Task.WhenAll(task1, task2,... (Exception is thrown on Cancel)
+        #region Await Task.WhenAll(task1, task2,... (Exception is thrown on Cancel)
         [Fact]
         public async void Behavior_Await_Task_WhenAll_TaskDelayAsync()
         {
@@ -186,7 +183,7 @@ namespace EifelMono.Tasks.Test
         }
         #endregion
 
-        #region AWait Task.WhenAny(task1, task2,... (no Exception is thrown on Cancel)
+        #region Await Task.WhenAny(task1, task2,... (no Exception is thrown on Cancel)
         [Fact]
         public async void Behavior_Await_Task_WhenAny_TaskDelayAsync()
         {
