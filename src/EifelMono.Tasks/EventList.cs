@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace EifelMono.Tasks
 {
-    #region EventList Item
+    #region EventListItem
     internal class EventListItem
     {
-        public bool IsTaskAction { get; set; } = false;
-        public object Action { get; set; } = null;
+        internal bool IsTaskAction { get; set; } = false;
+        internal object Action { get; set; } = null;
 
-        public static EventListItem CreateVoidAction(object voidAction)
+        internal static EventListItem CreateVoidAction(object voidAction)
             => new() { IsTaskAction = false, Action = voidAction };
-        public static EventListItem CreateTaskAction(object taskAction)
+        internal static EventListItem CreateTaskAction(object taskAction)
             => new() { IsTaskAction = true, Action = taskAction };
     }
     #endregion
@@ -100,7 +100,7 @@ namespace EifelMono.Tasks
     }
     #endregion
 
-    #region EventList
+    #region EventList without arguments
     public class EventList : EventListCore
     {
         public Action Subscribe(Action voidAction)
@@ -144,7 +144,7 @@ namespace EifelMono.Tasks
     }
     #endregion
 
-    #region EventList with arguments
+    #region EventList with arguments <T1> ... <T1, T2, T3, T4, T5>
     public class EventList<T1> : EventListCore
     {
         public Action<T1> Subscribe(Action<T1> voidAction)
