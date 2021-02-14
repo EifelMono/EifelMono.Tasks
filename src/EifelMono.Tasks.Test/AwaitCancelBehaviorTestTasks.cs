@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace EifelMono.Tasks.Test
 {
-    public static class TestTasks
+    public static class AwaitCancelBehaviorTestTasks
     {
         public static Task Test_TaskAsync()
             => Task.Delay(1);
