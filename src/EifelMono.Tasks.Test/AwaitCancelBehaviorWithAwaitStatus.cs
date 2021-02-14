@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using EifelMono.Tasks;
 
 #pragma warning disable xUnit1013 // Public method should be marked as test
 
