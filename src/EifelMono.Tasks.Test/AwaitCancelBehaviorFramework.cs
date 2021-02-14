@@ -7,7 +7,7 @@ using Xunit;
 
 namespace EifelMono.Tasks.Test
 {
-    public class FrameworkAsyncBehaviorCancellationTokenSourceCancel
+    public class AwaitCancelBehavior_Framework
     {
         // ---------------------------------------------------------------------
         // Exception
@@ -17,40 +17,6 @@ namespace EifelMono.Tasks.Test
         //     +-- TaskCanceledException
         // ---------------------------------------------------------------------
 
-        #region Test Tasks
-        public static Task Test_TaskAsync()
-            => Task.Delay(1);
-
-        public static async Task Test_TaskDelayAsync(int millisecondsDelay, CancellationToken cancellationToken)
-        {
-            await Test_TaskAsync();
-
-            await Task.Delay(millisecondsDelay, cancellationToken).ConfigureAwait(false);
-        }
-
-        public static async Task Test_CancellationTokenThrowIfCancellationRequestedAsync(CancellationToken cancellationToken)
-        {
-            await Test_TaskAsync();
-
-            cancellationToken.ThrowIfCancellationRequested();
-        }
-
-        public static async Task Test_TaskCompletionSourceAsync(CancellationToken cancellationToken)
-        {
-            await Test_TaskAsync();
-            var taskCompletionSource = new TaskCompletionSource<int>();
-            taskCompletionSource.SetCanceled(cancellationToken);
-            await taskCompletionSource.Task;
-        }
-
-        public static async Task Test_ThrowException()
-        {
-            await Test_TaskAsync();
-
-            throw new Exception("ThrowException");
-        }
-        #endregion
-
         #region Await Task (Exception is thrown on Cancel)
         [Fact]
         public async void Behavior_Await_TaskDelayAsync()
@@ -59,7 +25,7 @@ namespace EifelMono.Tasks.Test
             using var cancellationTokenSource = new CancellationTokenSource();
             // Cancel direct
             cancellationTokenSource.Cancel();
-            var task = Test_TaskDelayAsync(-1, cancellationTokenSource.Token);
+            var task = TestTasks.TaskDelayAsync(-1, cancellationTokenSource.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -83,7 +49,7 @@ namespace EifelMono.Tasks.Test
             using var cancellationTokenSource = new CancellationTokenSource();
             // Cancel direct
             cancellationTokenSource.Cancel();
-            var task = Test_CancellationTokenThrowIfCancellationRequestedAsync(cancellationTokenSource.Token);
+            var task = TestTasks.CancellationTokenThrowIfCancellationRequestedAsync(cancellationTokenSource.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -107,7 +73,7 @@ namespace EifelMono.Tasks.Test
             using var cancellationTokenSource = new CancellationTokenSource();
             // Cancel direct
             cancellationTokenSource.Cancel();
-            var task = Test_TaskCompletionSourceAsync(cancellationTokenSource.Token);
+            var task = TestTasks.TaskCompletionSourceAsync(cancellationTokenSource.Token);
             try
             {
                 await task.ConfigureAwait(false);
@@ -128,7 +94,10 @@ namespace EifelMono.Tasks.Test
         public async void Behavior_Await_ThrowExceptionAsync()
         {
             var behaviorOk = false;
-            var task = Test_ThrowException();
+            using var cancellationTokenSource = new CancellationTokenSource();
+            // Cancel direct
+            cancellationTokenSource.Cancel();
+            var task = TestTasks.ThrowException(cancellationTokenSource.Token);
             try
             {
                 await task.ConfigureAwait(true);
@@ -155,9 +124,9 @@ namespace EifelMono.Tasks.Test
             // Cancel 1 direct
             cancellationTokenSource1.Cancel();
           
-            var task1 = Test_TaskDelayAsync(1, cancellationTokenSource1.Token);
-            var task2 = Test_TaskDelayAsync(500, cancellationTokenSource2.Token);
-            var task3 = Test_TaskDelayAsync(500, cancellationTokenSource2.Token);
+            var task1 = TestTasks.TaskDelayAsync(1, cancellationTokenSource1.Token);
+            var task2 = TestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token);
+            var task3 = TestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token);
             var stopwatch = Stopwatch.StartNew();
             try
             {
@@ -192,9 +161,9 @@ namespace EifelMono.Tasks.Test
             using var cancellationTokenSource2 = new CancellationTokenSource();
             // Cancel 1 direct
             cancellationTokenSource1.Cancel();
-            var task1 = Test_TaskDelayAsync(1, cancellationTokenSource1.Token);
-            var task2 = Test_TaskDelayAsync(-1, cancellationTokenSource2.Token);
-            var task3 = Test_TaskDelayAsync(-1, cancellationTokenSource2.Token);
+            var task1 = TestTasks.TaskDelayAsync(1, cancellationTokenSource1.Token);
+            var task2 = TestTasks.TaskDelayAsync(-1, cancellationTokenSource2.Token);
+            var task3 = TestTasks.TaskDelayAsync(-1, cancellationTokenSource2.Token);
             var resultTask = await Task.WhenAny(task1, task2, task3).ConfigureAwait(false);
 
             Assert.Equal(resultTask, task1);
