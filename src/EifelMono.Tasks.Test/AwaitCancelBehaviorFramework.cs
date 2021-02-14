@@ -15,6 +15,22 @@ namespace EifelMono.Tasks.Test
         // +-- OperationCancelException
         //     |
         //     +-- TaskCanceledException
+        //
+        //
+        // OperationCancelException
+        // |
+        // +-- var cts= new CancellationTokenSource();
+        // |   cts.Cancel();
+        // |
+        // +-- var token= cts.Token;
+        // |   token.ThrowIfCancellationRequested() 
+        //
+        // TaskCanceledException
+        // |
+        // +-- var cts= new CancellationTokenSource();
+        // |   cts.Cancel();
+        // |   await Task.Delay(1, cts.Token);
+        //
         // ---------------------------------------------------------------------
 
         #region Await Task (Exception is thrown on Cancel)
