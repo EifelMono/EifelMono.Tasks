@@ -37,5 +37,14 @@ namespace EifelMono.Tasks.Test
 
             throw new Exception("ThrowException");
         }
+
+
+        public static async Task TaskLevelAsync(int level, Action<int> levelAction)
+        {
+            await Test_TaskAsync();
+
+            levelAction?.Invoke(level);
+            await TaskLevelAsync(level++, levelAction);
+        }
     }
 }

@@ -160,5 +160,47 @@ namespace EifelMono.Tasks.Test
                 Assert.True(true, "Error");
         }
         #endregion
+
+        #region DeepTaskTests
+        [Fact]
+        public async void Behavior_Await_LevelTest_Cancel()
+        {
+            for (var outerLevel = 0; outerLevel < 10; outerLevel++)
+            {
+                var awaitStatus = await AwaitCancelBehaviorTestTasks.TaskLevelAsync(outerLevel, (innerLevel) =>
+                {
+                    if (outerLevel == innerLevel)
+                        throw new OperationCanceledException();
+                }).AwaitStatusAsync().ConfigureAwait(false);
+
+                var behaviorOk = awaitStatus.IsCanceled();
+                Assert.True(awaitStatus.Task.IsCanceled);
+                if (behaviorOk)
+                    Assert.True(true, "This the current behavior is ok");
+                else
+                    Assert.True(false, "Error");
+            }
+        }
+
+        [Fact]
+        public async void Behavior_Await_LevelTest_Exception()
+        {
+            for (var outerLevel = 0; outerLevel < 10; outerLevel++)
+            {
+                var awaitStatus = await AwaitCancelBehaviorTestTasks.TaskLevelAsync(outerLevel, (innerLevel) =>
+                {
+                    if (outerLevel == innerLevel)
+                        throw new Exception();
+                }).AwaitStatusAsync().ConfigureAwait(false);
+
+                var behaviorOk = awaitStatus.IsFaulted();
+                Assert.True(awaitStatus.Task.IsFaulted);
+                if (behaviorOk)
+                    Assert.True(true, "This the current behavior is ok");
+                else
+                    Assert.True(false, "Error");
+            }
+        }
+        #endregion
     }
 }

@@ -185,5 +185,64 @@ namespace EifelMono.Tasks.Test
                 Assert.True(true, "Error");
         }
         #endregion
+
+
+        #region DeepTaskTests
+        [Fact]
+        public async void Behavior_Await_LevelTest_Cancel()
+        {
+            for (var outerLevel = 0; outerLevel < 10; outerLevel++)
+            {
+                var behaviorOk = false;
+                var task = AwaitCancelBehaviorTestTasks.TaskLevelAsync(outerLevel, (innerLevel)=>
+                {
+                    if (outerLevel == innerLevel)
+                        throw new OperationCanceledException();
+                });
+                try
+                {
+                    await task.ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is OperationCanceledException)
+                        behaviorOk = true;
+                }
+                Assert.True(task.IsCanceled);
+                if (behaviorOk)
+                    Assert.True(true, "This the current behavior is ok");
+                else
+                    Assert.True(false, "Error");
+            }
+        }
+
+        [Fact]
+        public async void Behavior_Await_LevelTest_Exception()
+        {
+            for (var outerLevel = 0; outerLevel < 10; outerLevel++)
+            {
+                var behaviorOk = false;
+                var task = AwaitCancelBehaviorTestTasks.TaskLevelAsync(outerLevel, (innerLevel) =>
+                {
+                    if (outerLevel == innerLevel)
+                        throw new Exception();
+                });
+                try
+                {
+                    await task.ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is Exception)
+                        behaviorOk = true;
+                }
+                Assert.True(task.IsFaulted);
+                if (behaviorOk)
+                    Assert.True(true, "This the current behavior is ok");
+                else
+                    Assert.True(false, "Error");
+            }
+        }
+        #endregion
     }
 }
