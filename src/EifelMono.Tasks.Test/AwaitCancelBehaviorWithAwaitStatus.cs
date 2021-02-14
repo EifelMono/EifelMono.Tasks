@@ -28,10 +28,8 @@ namespace EifelMono.Tasks.Test
             var behaviorOk = awaitStatus.AwaitStatus.IsCanceled();
 
             Assert.True(awaitStatus.Task.IsCanceled);
-            if (behaviorOk)
-                Assert.True(true, "This the current behavior is ok");
-            else
-                Assert.True(false, "Error");
+
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
 
         [Fact]
@@ -46,10 +44,8 @@ namespace EifelMono.Tasks.Test
             var behaviorOk = awaitStatus.AwaitStatus.IsCanceled();
 
             Assert.True(awaitStatus.Task.IsCanceled);
-            if (behaviorOk)
-                Assert.True(true, "This the current behavior is ok");
-            else
-                Assert.True(false, "Error");
+
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
 
         [Fact]
@@ -63,10 +59,8 @@ namespace EifelMono.Tasks.Test
 
             var behaviorOk = awaitStatus.AwaitStatus.IsCanceled();
             Assert.True(awaitStatus.Task.IsCanceled);
-            if (behaviorOk)
-                Assert.True(true, "This the current behavior is ok");
-            else
-                Assert.True(false, "Error");
+
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
 
         [Fact]
@@ -80,10 +74,8 @@ namespace EifelMono.Tasks.Test
 
             var behaviorOk = awaitStatus.AwaitStatus.IsFaulted();
             Assert.True(awaitStatus.Task.IsFaulted);
-            if (behaviorOk)
-                Assert.True(true, "This the current behavior is ok");
-            else
-                Assert.True(false, "Error");
+
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
         #endregion
 
@@ -119,10 +111,7 @@ namespace EifelMono.Tasks.Test
             Assert.True(task2.IsCompletedSuccessfully);
             Assert.True(task3.IsCompletedSuccessfully);
 
-            if (behaviorOk)
-                Assert.True(true, "This the current behavior is ok");
-            else
-                Assert.True(true, "Error");
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
         #endregion
 
@@ -154,10 +143,8 @@ namespace EifelMono.Tasks.Test
 
             if (task1.IsCanceled)
                 behaviorOk = true;
-            if (behaviorOk)
-                Assert.True(true, "This the current behavior is ok");
-            else
-                Assert.True(true, "Error");
+
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
         #endregion
 
@@ -175,10 +162,8 @@ namespace EifelMono.Tasks.Test
 
                 var behaviorOk = awaitStatus.IsCanceled();
                 Assert.True(awaitStatus.Task.IsCanceled);
-                if (behaviorOk)
-                    Assert.True(true, "This the current behavior is ok");
-                else
-                    Assert.True(false, "Error");
+
+                Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
             }
         }
 
@@ -195,10 +180,8 @@ namespace EifelMono.Tasks.Test
 
                 var behaviorOk = awaitStatus.IsFaulted();
                 Assert.True(awaitStatus.Task.IsFaulted);
-                if (behaviorOk)
-                    Assert.True(true, "This the current behavior is ok");
-                else
-                    Assert.True(false, "Error");
+
+                Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
             }
         }
         #endregion

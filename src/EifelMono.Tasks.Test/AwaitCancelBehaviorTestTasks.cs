@@ -46,5 +46,11 @@ namespace EifelMono.Tasks.Test
             levelAction?.Invoke(level);
             await TaskLevelAsync(level++, levelAction);
         }
+
+        public static string BehaviorText(bool behaviorOk)
+        {
+            var text = behaviorOk ? "Ok" : "not Ok";
+            return $"This the current behavior is {text})";
+        }
     }
 }
