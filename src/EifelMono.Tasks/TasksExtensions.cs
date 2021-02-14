@@ -151,44 +151,44 @@ namespace EifelMono.Tasks
         #endregion
 
         #region On AwaitStatus ...
-        public static T OnAwaitStatus<T>(this T thisValue, Action<T> action, AwaitStatus awaitStatus = default) where T: AwaitStatusTask
+        public static T OnAwaitStatus<T>(this T thisValue, Action<T> action, AwaitStatus awaitStatus = default) where T : AwaitStatusTaskBase
         {
             if (awaitStatus == default || thisValue.AwaitStatus.Contains(awaitStatus))
                 action?.Invoke(thisValue);
             return thisValue;
         }
 
-        public static T OnOk<T>(this T thisValue, Action<T> action) where T: AwaitStatusTask
+        public static T OnOk<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.Ok);
 
-        public static T OnFaulted<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnFaulted<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.Faulted);
 
-        public static AwaitStatusTask OnLookAtTaskDotStatusForMore<T>(this AwaitStatusTask thisValue, Action<AwaitStatusTask> action)
+        public static T OnLookAtTaskDotStatusForMore<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.LookAtTaskDotStatusForMore);
 
-        public static T OnCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.Canceled);
 
-        public static T OnNodeCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnNodeCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.NodeCanceled);
 
-        public static T OnRootCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnRootCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.RootCanceled);
 
-        public static T OnBranchCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnBranchCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.BranchCanceled);
 
-        public static T OnTimeoutCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnTimeoutCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.TimeoutCanceled);
 
-        public static T OnExternalsCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTask
+        public static T OnExternalsCanceled<T>(this T thisValue, Action<T> action) where T : AwaitStatusTaskBase
             => thisValue.OnAwaitStatus(action, AwaitStatus.ExternalsCanceled);
         #endregion
 
         #region ThrowIfRootCanceled
         public static T
-            ThrowIfRootCanceled<T>(this T thisValue, CancellationTokenNode cancellationTokenNode) where T: AwaitStatusTaskBase
+            ThrowIfRootCanceled<T>(this T thisValue, CancellationTokenNode cancellationTokenNode) where T : AwaitStatusTaskBase
         {
             if (thisValue.AwaitStatus.IsRootCanceled())
                 throw new OperationRootCanceledException(cancellationTokenNode.Root.Token);
@@ -197,7 +197,7 @@ namespace EifelMono.Tasks
         #endregion
 
         #region FireAndForget
-        public static async void FireAndForget<T>(this T thisValue) where T: Task
+        public static async void FireAndForget<T>(this T thisValue) where T : Task
             => await thisValue.AwaitStatusAsync().ConfigureAwait(false);
         #endregion
     }
