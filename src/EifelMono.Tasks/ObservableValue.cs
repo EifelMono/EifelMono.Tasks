@@ -46,13 +46,10 @@ namespace EifelMono.Tasks
         protected async Task<AwaitStatusTaskResult<T>> WaitAsync(CancellationToken cancellationToken, params T[] waitValues)
         {
             var taskComplitionSource = new TaskCompletionSource<T>();
-            // if net5.0
-            // taskComplitionSource.SetCanceled(cancellationToken);
-            using var cancellationTokenRegistration= cancellationToken.Register(() =>
+            using var cancellationTokenRegistration = cancellationToken.Register(() =>
             {
                 taskComplitionSource.TrySetCanceled();
             });
-
             var onChanged = OnChanged.Subscribe(newValue =>
             {
                 if (waitValues.Length == 0 || waitValues.Contains(newValue))
@@ -62,7 +59,7 @@ namespace EifelMono.Tasks
             {
                 var newValue = Value;
                 if (waitValues.Contains(newValue))
-                    return new (AwaitStatus.Ok, Task.FromResult(newValue), newValue);
+                    return new(AwaitStatus.Ok, Task.FromResult(newValue), newValue);
                 return await taskComplitionSource.Task.AwaitStatusAsync().ConfigureAwait(false);
             }
             finally

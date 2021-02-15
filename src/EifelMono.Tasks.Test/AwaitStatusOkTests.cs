@@ -36,10 +36,12 @@ namespace EifelMono.Tasks.Test
             var task = TestTaskAsync(cts.Token);
             var resultTask = await Task.WhenAny(task);
             Assert.Equal(1, resultTask.Result);
-         
+
             Assert.Equal(task, resultTask);
+#if NET5_0
             Assert.True(task.IsCompletedSuccessfully);
             Assert.Equal(1, task.Result);
+#endif
         }
 
         [Fact]
@@ -68,7 +70,9 @@ namespace EifelMono.Tasks.Test
             var task = TestTaskAsync(cts.Token);
             var resultTask = await Task.WhenAny(task);
             Assert.Equal(task, resultTask);
+#if NET5_0
             Assert.True(task.IsCompletedSuccessfully);
+#endif
             var result = task.AwaitStatusFromTask();
             Assert.True(result.IsOk());
             Assert.Equal(1, result.Result);

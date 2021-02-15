@@ -30,14 +30,14 @@ namespace EifelMono.Tasks.Test
         public async void Positive_With_Timeout()
         {
             using var ctn = new CancellationTokenNode()
-                .WithTimeout(TimeSpan.FromSeconds(1));
+                .WithTimeout(TimeSpan.FromMilliseconds(1));
 
             var ov = new ObservableValue<int>(10);
             Assert.Equal(10, ov.Value);
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(100));
+                await Task.Delay(TimeSpan.FromSeconds(1));
                 // ov.Value = 2;
             });
 
@@ -55,16 +55,16 @@ namespace EifelMono.Tasks.Test
         public async void Positive_With_BranchCanceled()
         {
             using var ctn = new CancellationTokenNode()
-                .WithTimeout(TimeSpan.FromSeconds(1));
+                .WithTimeout(TimeSpan.FromMilliseconds(100));
 
             var ov = new ObservableValue<int>(10);
             Assert.Equal(10, ov.Value);
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(100));
-                // ov.Value = 2;
-            });
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                    // ov.Value = 2;
+                });
 
             var result = await ov.WaitAsync(1, ctn);
             Assert.True(result.AwaitStatus.IsCanceled());

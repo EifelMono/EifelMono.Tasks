@@ -108,14 +108,15 @@ namespace EifelMono.Tasks.Test
             Assert.True(stopwatch.ElapsedMilliseconds > 500);
 
             Assert.True(task1.IsCanceled);
+#if NET5_0
             Assert.True(task2.IsCompletedSuccessfully);
             Assert.True(task3.IsCompletedSuccessfully);
-
+#endif
             Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
-        #endregion
+#endregion
 
-        #region Await Task.WhenAny(task1, task2,... (no Exception is thrown on Cancel)
+#region Await Task.WhenAny(task1, task2,... (no Exception is thrown on Cancel)
         [Fact]
         public async void Behavior_Await_Task_WhenAny_TaskDelayAsync()
         {
@@ -146,9 +147,9 @@ namespace EifelMono.Tasks.Test
 
             Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
-        #endregion
+#endregion
 
-        #region DeepTaskTests
+#region DeepTaskTests
         [Fact]
         public async void Behavior_Await_LevelTest_Cancel()
         {
@@ -184,6 +185,6 @@ namespace EifelMono.Tasks.Test
                 Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
             }
         }
-        #endregion
+#endregion
     }
 }

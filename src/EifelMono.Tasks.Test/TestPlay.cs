@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -16,6 +17,24 @@ namespace EifelMono.Tasks.Test
             Output = output;
         }
         [Fact]
+        public async void TaskException()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await Task.Delay(1);
+                }, cts.Token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        [Fact]
         public async void On_Cancel_Task_Test()
         {
             var awaitStatusResult = (await Task.Run(async () =>
@@ -25,7 +44,6 @@ namespace EifelMono.Tasks.Test
             }).AwaitStatusAsync().ConfigureAwait(false))
             .OnOk(s =>
             {
-                
                 Output.WriteLine("Ok");
             });
         }
