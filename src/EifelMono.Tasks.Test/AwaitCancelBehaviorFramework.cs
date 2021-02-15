@@ -57,6 +57,28 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
+        public async void Behavior_Await_TaskAsync()
+        {
+            var behaviorOk = false;
+            using var cancellationTokenSource = new CancellationTokenSource();
+            // Cancel direct
+            cancellationTokenSource.Cancel();
+            var task = AwaitCancelBehaviorTestTasks.TaskAsync(cancellationTokenSource.Token);
+            try
+            {
+                await task.ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                if (ex is TaskCanceledException && ex is OperationCanceledException)
+                    behaviorOk = true;
+            }
+            Assert.True(task.IsCanceled);
+
+            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
+        }
+
+        [Fact]
         public async void Behavior_Await_ThrowIfCancellationRequestedAsync()
         {
             var behaviorOk = false;

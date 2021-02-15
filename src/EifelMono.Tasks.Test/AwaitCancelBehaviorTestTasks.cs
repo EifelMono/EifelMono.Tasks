@@ -22,7 +22,7 @@ namespace EifelMono.Tasks.Test
         /// <summary>
         /// throws TaskCanceledException (OperationCanceledException)
         /// </summary>
-        public static async Task TaskAsync(int millisecondsDelay, CancellationToken cancellationToken)
+        public static async Task TaskAsync(CancellationToken cancellationToken)
         {
             await AsyncAwaitTaskAsync();
 
