@@ -1,10 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
-
-     <IsPackable>true</IsPackable>
-  </PropertyGroup>
-
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>eifelmono</Authors>
+		<Owners>eifelmono, Andreas Klaperich</Owners>
+		<PackageProjectUrl>https://github.com/EifelMono/EifelMono.Tasks</PackageProjectUrl>
+		<Title>EifelMono.Tasks</Title>
+		<Description>Enums, Extensions, Classes for better cleaner async/await</Description>
+		<LangVersion>preview</LangVersion>
+		<NullableReferenceTypes>true</NullableReferenceTypes>
+		<RepositoryUrl>https://github.com/EifelMono/EifelMono.Tasks.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Copyright>(C)copyright eifelmono</Copyright>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<Version>0.0.9</Version>
+		<PackageVersion>$(Version)</PackageVersion>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+	</PropertyGroup>
 </Project>

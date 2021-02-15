@@ -212,7 +212,6 @@ namespace EifelMono.Tasks.Test
         }
 #endregion
 
-
 #region DeepTaskTests
         [Fact]
         public async void Behavior_Await_LevelTest_Cancel()
