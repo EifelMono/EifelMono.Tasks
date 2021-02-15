@@ -16,51 +16,38 @@ namespace EifelMono.Tasks.Test
         {
             Output = output;
         }
-        [Fact]
-        public async void TaskException()
+
+        public async Task<int> TaskIntAsync(int delayInMSec, int returnValue)
         {
-            var cts = new CancellationTokenSource();
-            cts.Cancel();
-            try
-            {
-                await Task.Run(async () =>
-                {
-                    await Task.Delay(1);
-                }, cts.Token);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            await Task.Delay(delayInMSec);
+            return returnValue;
         }
 
-        [Fact]
-        public async void On_Cancel_Task_Test()
+        public async Task<string> TaskStringAsync(int delayInMSec, string returnValue)
         {
-            var awaitStatusResult = (await Task.Run(async () =>
-            {
-                await Task.Delay(1);
-
-            }).AwaitStatusAsync().ConfigureAwait(false))
-            .OnOk(s =>
-            {
-                Output.WriteLine("Ok");
-            });
+            await Task.Delay(delayInMSec);
+            return returnValue;
         }
-
         [Fact]
-        public async void On_Cancel_TaskInt_Test()
+        public async void Test1()
         {
-            var awaitStatusResult = (await Task.Run(async () =>
-            {
-                await Task.Delay(1);
-                return 1;
 
-            }).AwaitStatusAsync().ConfigureAwait(false))
-            .OnOk(s =>
-            {
-                Output.WriteLine($"Ok result={s.Result}");
-            });
+            var whenAllResult = await WhenAll.AwaitStatusAsync(
+                    TaskIntAsync(100, 1),
+                    TaskStringAsync(100, "Test1"),
+                    TaskIntAsync(1000, 2)
+                );
+            Assert.Equal(AwaitStatus.Ok, whenAllResult.AwaitStatusTasks[0].AwaitStatus);
+            Assert.Equal(AwaitStatus.Ok, whenAllResult.AwaitStatusTasks[1].AwaitStatus);
+            Assert.Equal(AwaitStatus.Ok, whenAllResult.AwaitStatusTasks[2].AwaitStatus);
+
+            Assert.Equal(1, whenAllResult.Task1.Result);
+            Assert.Equal("Test1", whenAllResult.Task2.Result);
+            Assert.Equal(2, whenAllResult.Task3.Result);
+
+            Assert.Equal(1, whenAllResult.Task1.Result);
+            Assert.Equal("Test1", whenAllResult.Task2.Result);
+            Assert.Equal(2, whenAllResult.Task3.Result);
         }
     }
 }
