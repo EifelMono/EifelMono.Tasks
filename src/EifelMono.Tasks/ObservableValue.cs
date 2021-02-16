@@ -59,7 +59,7 @@ namespace EifelMono.Tasks
             {
                 var newValue = Value;
                 if (waitValues.Contains(newValue))
-                    return new(AwaitStatus.Ok, Task.FromResult(newValue), newValue);
+                    return new(AwaitStatus.Ok, Task.FromResult(newValue));
                 return await taskComplitionSource.Task.AwaitStatusAsync().ConfigureAwait(false);
             }
             finally

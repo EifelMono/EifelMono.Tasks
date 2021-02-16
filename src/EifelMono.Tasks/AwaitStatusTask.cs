@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EifelMono.Tasks
@@ -30,6 +31,7 @@ namespace EifelMono.Tasks
         {
             Task = task;
         }
+        public bool IsTaskValue => Task is { };
         public TTask Task { get; set; }
     }
 
@@ -38,24 +40,45 @@ namespace EifelMono.Tasks
         public AwaitStatusTaskResult() : base()
         {
         }
-        public AwaitStatusTaskResult(AwaitStatus awaitStatus, Task<TResult> task, TResult result) : base(awaitStatus, task)
+        public AwaitStatusTaskResult(AwaitStatus awaitStatus, Task<TResult> task) : base(awaitStatus, task)
         {
-            Result = result;
         }
-        public TResult Result { get; set; }
+
+        public TResult Result
+        {
+            get
+            {
+                if (IsTaskValue)
+                    return Task.Result;
+                return default;
+            }
+        }
     }
 
+    public class AwaitStatusTasks : AwaitStatusTaskBase
+    {
+        public AwaitStatusTask<Task>[] Items { get; set; } = new AwaitStatusTask<Task>[] { };
+        public AwaitStatusTask<Task>[] Canceled => Items.Where(ast => ast.IsCanceled()).ToArray();
+        public AwaitStatusTask<Task>[] Faulted => Items.Where(ast => ast.IsFaulted()).ToArray();
+    }
     #region WhenAll
 
-    public class AwaitStatusTaskWhenAll : AwaitStatusTaskBase
+    public class AwaitStatusTaskWhenAll : AwaitStatusTasks
     {
-        public AwaitStatusTask<Task>[] Tasks { get; set; } = new AwaitStatusTask<Task>[] { };
+    }
+
+    public class AwaitStatusTaskWhenAll<T1, T2> : AwaitStatusTaskWhenAll
+        where T1 : AwaitStatusTaskBase
+        where T2 : AwaitStatusTaskBase
+    {
+        public T1 Item1 { get; set; }
+        public T2 Item2 { get; set; }
     }
 
     #endregion
 
     #region WhenAny
-    public class AwaitStatusTaskWhenAny : AwaitStatusTaskWhenAll
+    public class AwaitStatusTaskWhenAny : AwaitStatusTasks
     {
     }
     #endregion

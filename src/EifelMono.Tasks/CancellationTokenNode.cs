@@ -4,6 +4,18 @@ using System.Threading;
 
 namespace EifelMono.Tasks
 {
+    // -------------------------------------------------------------------------
+    // +-- Root
+    // |
+    // | +-- Branch
+    // | +-- BranchTimeout
+    // | +-- BranchExternals
+    // | |
+    // | |
+    // +++
+    //  |
+    // Node
+
     sealed public class CancellationTokenNode : IDisposable
     {
         #region constructor / destructor

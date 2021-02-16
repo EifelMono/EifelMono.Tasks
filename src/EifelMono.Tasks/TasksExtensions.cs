@@ -62,7 +62,7 @@ namespace EifelMono.Tasks
             AwaitStatusFromTask<TResult>(this Task<TResult> thisValue)
         {
             var awaitStatus = thisValue.AwaitStatusOnlyFromTask();
-            return new(awaitStatus, thisValue, awaitStatus.IsOk() ? thisValue.Result : default);
+            return new(awaitStatus, thisValue);
         }
 
         public static AwaitStatusTask<TTask>
@@ -111,7 +111,7 @@ namespace EifelMono.Tasks
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             var result = thisValue.AwaitStatusFromTask(cancellationTokenNode);
-            return new(result.AwaitStatus, thisValue, result.AwaitStatus.IsOk() ? thisValue.Result : default);
+            return new(result.AwaitStatus, thisValue);
         }
         #endregion
 
