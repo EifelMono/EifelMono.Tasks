@@ -51,8 +51,8 @@ namespace EifelMono.Tasks
         #endregion
 
         #region AwaitStatusFromTask
-        public static AwaitStatusTask
-            AwaitStatusFromTask(this Task thisValue)
+        public static AwaitStatusTask<TTask>
+            AwaitStatusFromTask<TTask>(this TTask thisValue) where TTask : Task
         {
             var awaitStatus = thisValue.AwaitStatusOnlyFromTask();
             return new(awaitStatus, thisValue);
@@ -65,8 +65,8 @@ namespace EifelMono.Tasks
             return new(awaitStatus, thisValue, awaitStatus.IsOk() ? thisValue.Result : default);
         }
 
-        public static AwaitStatusTask
-            AwaitStatusFromTask(this Task thisValue, CancellationTokenNode cancellationTokenNode)
+        public static AwaitStatusTask<TTask>
+            AwaitStatusFromTask<TTask>(this TTask thisValue, CancellationTokenNode cancellationTokenNode) where TTask : Task
         {
             var result = thisValue.AwaitStatusFromTask();
             result.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(result.AwaitStatus);
@@ -81,18 +81,12 @@ namespace EifelMono.Tasks
             return result;
         }
 
-        public static T
-            AwaitStatusFromTask<T>(this T thisValue, CancellationTokenNode cancellationTokenNode) where T : AwaitStatusTaskBase
-        {
-            thisValue.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(thisValue.AwaitStatus);
-            return thisValue;
-        }
         #endregion
 
         #region AwaitStatusAsync
-        public static async Task<AwaitStatusTask>
-            AwaitStatusAsync(this Task thisValue)
-        {
+        public static async Task<AwaitStatusTask<TTask>>
+            AwaitStatusAsync<TTask>(this TTask thisValue) where TTask : Task
+        { 
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             return thisValue.AwaitStatusFromTask();
         }
@@ -104,8 +98,8 @@ namespace EifelMono.Tasks
             return thisValue.AwaitStatusFromTask();
         }
 
-        public static async Task<AwaitStatusTask>
-            AwaitStatusAsync(this Task thisValue, CancellationTokenNode cancellationTokenNode)
+        public static async Task<AwaitStatusTask<TTask>>
+            AwaitStatusAsync<TTask>(this TTask thisValue, CancellationTokenNode cancellationTokenNode) where TTask : Task
         {
             _ = await Task.WhenAny(thisValue).ConfigureAwait(false);
             var result = thisValue.AwaitStatusFromTask(cancellationTokenNode);
