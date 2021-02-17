@@ -69,6 +69,15 @@ namespace EifelMono.Tasks
     {
     }
 
+
+    public class AwaitStatusTaskWhenAll<A1, A2> : AwaitStatusTasks
+        where A1 : AwaitStatusTask
+        where A2 : AwaitStatusTask
+    {
+        public A1 Item1 { get; set; }
+        public A2 Item2 { get; set; }
+    }
+
     #endregion
 
     #region WhenAny

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace EifelMono.Tasks
@@ -34,6 +35,20 @@ namespace EifelMono.Tasks
             }
         }
 
+        public static async Task<AwaitStatusTaskWhenAll<A1,A2>> AwaitStatusAsyncA<A1, A2>(A1 awaitStatusTask1, A2 awaitStatusTask2)
+          where A1 : AwaitStatusTask
+          where A2 : AwaitStatusTask
+        {
+            {
+                var result = await AwaitStatusAsync();
+                return new AwaitStatusTaskWhenAll<A1, A2>
+                {
+                    Item1= awaitStatusTask1,
+                    Item2= awaitStatusTask2
+                };
+            }
+        }
+
         public static async Task TaskBAsync()
         {
             await Task.Delay(1);
@@ -48,11 +63,8 @@ namespace EifelMono.Tasks
 
         public static async Task TestAsync()
         {
-            var resultb = await AwaitStatusAsync(TaskBAsync().AwaitStatusFromTask(), TaskCAsync().AwaitStatusFromTask(), (b, c) =>
-             {
-                 _ = b.Task;
-                 _ = c.Result;
-             });
+            var resultb = await AwaitStatusAsyncA(TaskBAsync().When(), TaskCAsync().When());
+            _ = resultb.Item2.Result;
 
         }
 

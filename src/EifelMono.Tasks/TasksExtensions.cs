@@ -80,7 +80,13 @@ namespace EifelMono.Tasks
             result.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(result.AwaitStatus);
             return result;
         }
+        #endregion
 
+        #region When
+        public static AwaitStatusTask
+            When(this Task thisValue) => thisValue.AwaitStatusFromTask();
+        public static AwaitStatusTask<TResult>
+            When<TResult>(this Task<TResult> thisValue) => thisValue.AwaitStatusFromTask();
         #endregion
 
         #region AwaitStatusAsync
