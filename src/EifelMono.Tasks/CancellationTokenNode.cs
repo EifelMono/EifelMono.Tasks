@@ -5,15 +5,17 @@ using System.Threading;
 namespace EifelMono.Tasks
 {
     // -------------------------------------------------------------------------
-    // +-- Root
+    // +- Root
     // |
-    // | +-- Branch
-    // | +-- BranchTimeout
-    // | +-- BranchExternals
-    // | |
-    // | |
-    // +++
-    //  |
+    // |
+    // |
+    // | +--- Branch
+    // | |+-- BranchTimeout
+    // | ||+- BranchExternals
+    // | |||
+    // | |||
+    // +-+++
+    //   |
     // Node
 
     sealed public class CancellationTokenNode : IDisposable
