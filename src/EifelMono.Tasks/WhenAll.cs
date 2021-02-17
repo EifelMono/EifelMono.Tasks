@@ -23,24 +23,55 @@ namespace EifelMono.Tasks
                 return new AwaitStatusTaskWhenAll();
         }
 
-        //public static async Task<AwaitStatusTaskWhenAll<AwaitStatusTask<T1>, AwaitStatusTask<T2>>> AwaitStatusAsync<T1, T2>(T1 task1, T2 task2)
-        //    where T1 : Task
-        //    where T2 : Task
+        public static async Task<AwaitStatusTaskWhenAll> AwaitStatusAsync<A1, A2>(A1 awaitStatusTask1, A2 awaitStatusTask2, Action<A1, A2> action)
+            where A1 : AwaitStatusTask
+            where A2 : AwaitStatusTask
+        {
+            {
+                var result = await AwaitStatusAsync();
+                action(awaitStatusTask1, awaitStatusTask2);
+                return result;
+            }
+        }
+
+        public static async Task TaskBAsync()
+        {
+            await Task.Delay(1);
+        }
+
+        public static async Task<int> TaskCAsync()
+        {
+            await Task.Delay(1);
+            return 1;
+        }
+
+
+        public static async Task TestAsync()
+        {
+            var resultb = await AwaitStatusAsync(TaskBAsync().AwaitStatusFromTask(), TaskCAsync().AwaitStatusFromTask(), (b, c) =>
+             {
+                 _ = b.Task;
+                 _ = c.Result;
+             });
+
+        }
+
+        //public static async Task<(AwaitStatusTask<Task>, AwaitStatusTask<Task>)> AwaitStatusAsync(Task task1, Task task2)
         //{
-        //    await Task.WhenAll(task1, task2);
+        //    var result= await AwaitStatusAsync(task1, task2);
 
         //    var item1 = task1.AwaitStatusFromTask();
         //    var item2 = task2.AwaitStatusFromTask();
-        //    return new AwaitStatusTaskWhenAll<AwaitStatusTask<T1>, AwaitStatusTask<T2>>
-        //    {
-        //        Items = new AwaitStatusTask<Task>[]
-        //        {
-        //            item1,
-        //            item2
-        //        },
-        //        Item1 = item1,
-        //        Item2 = item2,
-        //    };
+        //    return (item1, item2);
+        //}
+
+        //public static async Task<(AwaitStatusTask<Task<TResult1>>, AwaitStatusTask<Task<TResult2>>)> AwaitStatusAsync<TResult1, TResult2>(Task<TResult1> task1, Task<TResult2> task2)
+        //{
+        //    var result = await AwaitStatusAsync(task1, task2);
+
+        //    var item1 = task1.AwaitStatusFromTask();
+        //    var item2 = task2.AwaitStatusFromTask();
+        //    return (item1, item2);
         //}
     }
 }

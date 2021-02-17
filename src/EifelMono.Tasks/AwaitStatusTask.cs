@@ -22,25 +22,25 @@ namespace EifelMono.Tasks
         public AwaitStatus AwaitStatus { get; set; }
     }
 
-    public class AwaitStatusTask<TTask> : AwaitStatusTaskBase where TTask : Task
+    public class AwaitStatusTask : AwaitStatusTaskBase
     {
         public AwaitStatusTask() : base()
         {
         }
-        public AwaitStatusTask(AwaitStatus awaitStatus, TTask task) : base(awaitStatus)
+        public AwaitStatusTask(AwaitStatus awaitStatus, Task task) : base(awaitStatus)
         {
             Task = task;
         }
-        public bool IsTaskValue => Task is { };
-        public TTask Task { get; set; }
+        public bool IsTaskValid => Task is { };
+        public Task Task { get; set; }
     }
 
-    public class AwaitStatusTaskResult<TResult> : AwaitStatusTask<Task<TResult>>
+    public class AwaitStatusTask<TResult> : AwaitStatusTask
     {
-        public AwaitStatusTaskResult() : base()
+        public AwaitStatusTask() : base()
         {
         }
-        public AwaitStatusTaskResult(AwaitStatus awaitStatus, Task<TResult> task) : base(awaitStatus, task)
+        public AwaitStatusTask(AwaitStatus awaitStatus, Task<TResult> task) : base(awaitStatus, task)
         {
         }
 
@@ -48,31 +48,25 @@ namespace EifelMono.Tasks
         {
             get
             {
-                if (IsTaskValue)
+                if (IsTaskValid)
                     return Task.Result;
                 return default;
             }
         }
+
+        public new Task<TResult> Task { get => base.Task as Task<TResult>; set => base.Task = value; }
     }
 
     public class AwaitStatusTasks : AwaitStatusTaskBase
     {
-        public AwaitStatusTask<Task>[] Items { get; set; } = new AwaitStatusTask<Task>[] { };
-        public AwaitStatusTask<Task>[] Canceled => Items.Where(ast => ast.IsCanceled()).ToArray();
-        public AwaitStatusTask<Task>[] Faulted => Items.Where(ast => ast.IsFaulted()).ToArray();
+        public AwaitStatusTask[] Items { get; set; } = new AwaitStatusTask[] { };
+        public AwaitStatusTask[] Canceled => Items.Where(ast => ast.IsCanceled()).ToArray();
+        public AwaitStatusTask[] Faulted => Items.Where(ast => ast.IsFaulted()).ToArray();
     }
     #region WhenAll
 
     public class AwaitStatusTaskWhenAll : AwaitStatusTasks
     {
-    }
-
-    public class AwaitStatusTaskWhenAll<T1, T2> : AwaitStatusTaskWhenAll
-        where T1 : AwaitStatusTaskBase
-        where T2 : AwaitStatusTaskBase
-    {
-        public T1 Item1 { get; set; }
-        public T2 Item2 { get; set; }
     }
 
     #endregion
