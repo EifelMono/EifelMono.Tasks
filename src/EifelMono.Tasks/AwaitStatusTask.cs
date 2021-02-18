@@ -17,9 +17,14 @@ namespace EifelMono.Tasks
         }
         public AwaitStatusTaskBase(AwaitStatus awaitStatus)
         {
-            AwaitStatus = awaitStatus;
+            _awaitStatus = awaitStatus;
         }
-        public AwaitStatus AwaitStatus { get; set; }
+
+        protected virtual AwaitStatus GetAwaitStatus()
+            => _awaitStatus;
+
+        protected AwaitStatus _awaitStatus { get; set; } = AwaitStatus.Unknown;
+        public AwaitStatus AwaitStatus => GetAwaitStatus();
     }
 
     public class AwaitStatusTask : AwaitStatusTaskBase
@@ -27,12 +32,31 @@ namespace EifelMono.Tasks
         public AwaitStatusTask() : base()
         {
         }
-        public AwaitStatusTask(AwaitStatus awaitStatus, Task task) : base(awaitStatus)
+        public AwaitStatusTask( Task task) : base(AwaitStatus.Unknown)
         {
             Task = task;
         }
+        protected override AwaitStatus GetAwaitStatus()
+        {
+            var awaitStatus = base.GetAwaitStatus();
+            if (awaitStatus == AwaitStatus.Unknown)
+                awaitStatus = AwaitStatus.TaskNotAssigned;
+            if (Task is { })
+            {
+                awaitStatus = Task.AwaitStatusOnlyFromTask();
+                if (CancellationTokenNode is { })
+                    awaitStatus = CancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(awaitStatus);
+            }
+            return awaitStatus;
+        }
+
         public bool IsTaskValid => Task is { };
         public Task Task { get; set; }
+        public TaskStatus TaskStatus => Task?.Status ?? TaskStatus.Faulted;
+
+        public CancellationTokenNode CancellationTokenNode { get;protected set; }
+        internal void SetCancellationTokenNode(CancellationTokenNode cancellationTokenNode)
+           => CancellationTokenNode = cancellationTokenNode;
     }
 
     public class AwaitStatusTask<TResult> : AwaitStatusTask
@@ -40,7 +64,7 @@ namespace EifelMono.Tasks
         public AwaitStatusTask() : base()
         {
         }
-        public AwaitStatusTask(AwaitStatus awaitStatus, Task<TResult> task) : base(awaitStatus, task)
+        public AwaitStatusTask(Task<TResult> task) : base(task)
         {
         }
 

@@ -7,17 +7,21 @@ namespace EifelMono.Tasks
     public enum AwaitStatus
     {
         Unknown = 0x0000,
+        TaskNotAssigned = 0x0001,
+        // 0x0002
+        // 0x0004
+        // 0x0008
 
-        Ok = 0x0001,
-        Faulted = 0x0002,
-        LookAtTaskDotStatusForMore = 0x0004,
-        Canceled = 0x0008,
+        Ok = 0x0010,
+        Faulted = 0x0020,
+        LookAtTaskDotStatusForMore = 0x0040,
+        Canceled = 0x0080,
 
-        NodeCanceled = 0x0010,
-        RootCanceled = 0x0020,
-        BranchCanceled = 0x0040,
-        TimeoutCanceled = 0x0080,
-        ExternalsCanceled = 0x0100,
+        NodeCanceled = 0x0100,
+        RootCanceled = 0x0200,
+        BranchCanceled = 0x0400,
+        TimeoutCanceled = 0x0800,
+        ExternalsCanceled = 0x1000,
     }
 
     public static class AwaitStatusExtensions

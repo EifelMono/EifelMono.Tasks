@@ -59,7 +59,7 @@ namespace EifelMono.Tasks
             {
                 var newValue = Value;
                 if (waitValues.Contains(newValue))
-                    return new(AwaitStatus.Ok, Task.FromResult(newValue));
+                    return new(Task.FromResult(newValue));
                 return await taskComplitionSource.Task.AwaitStatusAsync().ConfigureAwait(false);
             }
             finally
@@ -70,11 +70,7 @@ namespace EifelMono.Tasks
         }
 
         protected async Task<AwaitStatusTask<T>> WaitAsync(CancellationTokenNode cancellationTokenNode, params T[] waitValues)
-        {
-            var result = await WaitAsync(cancellationTokenNode.Token, waitValues);
-            result.AwaitStatus = cancellationTokenNode.AwaitStatusOnlyFromCancellationTokenNode(result.AwaitStatus);
-            return result;
-        }
+            => (await WaitAsync(cancellationTokenNode.Token, waitValues)).AssignCancellationTokenNode(cancellationTokenNode);
         #endregion
 
         #region public WaitAsync with arguments

@@ -17,7 +17,8 @@ namespace EifelMono.Tasks
             if (awaitStatusTask is { })
                 return new AwaitStatusTaskWhenAll
                 {
-                    AwaitStatus = awaitStatusTask.AwaitStatus,
+                    // TODO
+                    // AwaitStatus = awaitStatusTask.AwaitStatus,
                     Items = tasks.Select(task => task.AwaitStatusFromTask()).ToArray(),
                 };
             else
