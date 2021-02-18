@@ -1,5 +1,4 @@
-﻿using System;
-namespace EifelMono.Tasks
+﻿namespace EifelMono.Tasks
 {
     public static class AwaitStatusTaskExtensions
     {
