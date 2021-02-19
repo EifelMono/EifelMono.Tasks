@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EifelMono.Tasks.Test.Properties
+namespace EifelMono.Tasks.Test
 {
 
     public enum EnumA
