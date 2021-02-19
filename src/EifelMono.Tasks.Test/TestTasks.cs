@@ -9,6 +9,8 @@ namespace EifelMono.Tasks.Test
     {
         public static  async Task DelayAsync(TimeSpan timeSpan= default, CancellationToken cancellationToken= default)
         {
+            if (cancellationToken.IsCancellationRequested)
+                throw new Exception();
             await Task.Delay(timeSpan, cancellationToken);
         }
 

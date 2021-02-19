@@ -15,10 +15,15 @@ namespace EifelMono.Tasks
     // |  +-- AwaitStatusTask<TResult>
     // |        TResult Result
     // +--+-- AwaitStatusTasks
-    // |  |     Whens
-    //
-    //
-    // -------------------------------------------------------------------------
+    // |  |     Whens[]
+    // |  |     Canceled[]
+    // |  |     Faulted[]
+    // |  +-- AwaitStatusTaskWhenAll
+    // |  +-- AwaitStatusTaskWhenAny
+    // |        AnyTask
+    // |        AnyIndex
+    // |        Any
+     // -------------------------------------------------------------------------
 
     #region Single
     public class AwaitStatusTaskBase
@@ -38,7 +43,7 @@ namespace EifelMono.Tasks
         public AwaitStatus AwaitStatus => GetAwaitStatus();
     }
 
-   
+
 
     public class AwaitStatusTask : AwaitStatusTaskBase
     {
@@ -111,7 +116,7 @@ namespace EifelMono.Tasks
             Whens = awaitStatusTaskWhenAll?.Whens ?? new AwaitStatusTask[] { };
         }
 
-        public AwaitStatusTask[] Whens { get; set; } = new AwaitStatusTask[] { };
+        public AwaitStatusTask[] Whens { get; protected set; } = new AwaitStatusTask[] { };
         public AwaitStatusTask[] Canceled => Whens.Where(ast => ast.IsCanceled()).ToArray();
         public AwaitStatusTask[] Faulted => Whens.Where(ast => ast.IsFaulted()).ToArray();
     }
@@ -128,6 +133,7 @@ namespace EifelMono.Tasks
         public AwaitStatusTaskWhenAll(AwaitStatusTaskWhenAll awaitStatusTaskWhenAll) : base(awaitStatusTaskWhenAll)
         {
         }
+
     }
 
     public class AwaitStatusTaskWhenAll<W1, W2> : AwaitStatusTaskWhenAll
@@ -210,6 +216,20 @@ namespace EifelMono.Tasks
         public AwaitStatusTaskWhenAny(AwaitStatusTaskWhenAny awaitStatusTaskWhenAny) : base(awaitStatusTaskWhenAny)
         {
         }
+        public Task AnyTask => (Task as Task<Task>)?.Result;
+
+        public int AnyIndex
+        {
+            get
+            {
+                for (int index = 0; index < Whens.Length; index++)
+                    if (Whens[index].Task == AnyTask)
+                        return index;
+                return -1;
+            }
+        }
+
+        public AwaitStatusTask Any => AnyTask.AwaitStatusFromTask() ?? new();
     }
 
     public class AwaitStatusTaskWhenAny<W1, W2> : AwaitStatusTaskWhenAny

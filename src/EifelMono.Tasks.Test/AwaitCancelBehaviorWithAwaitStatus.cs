@@ -99,36 +99,30 @@ namespace EifelMono.Tasks.Test
         [Fact]
         public async void Behavior_Await_Task_WhenAll_TaskDelayAsync()
         {
-            throw new NotImplementedException("Todo find solution to for WhenAll");
-            var behaviorOk = false;
             using var cancellationTokenSource1 = new CancellationTokenSource();
             using var cancellationTokenSource2 = new CancellationTokenSource();
             // Cancel 1 direct
             cancellationTokenSource1.Cancel();
           
-            var task1 = AwaitCancelBehaviorTestTasks.TaskDelayAsync(1, cancellationTokenSource1.Token);
-            var task2 = AwaitCancelBehaviorTestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token);
-            var task3 = AwaitCancelBehaviorTestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token);
             var stopwatch = Stopwatch.StartNew();
-            try
-            {
-                await Task.WhenAll(task1, task2, task3).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                if (ex is OperationCanceledException)
-                    behaviorOk = true;
-            }
+            var whenAllResult= await WhenAll.AwaitStatusAsync(
+                    AwaitCancelBehaviorTestTasks.TaskDelayAsync(1, cancellationTokenSource1.Token).When(),
+                    AwaitCancelBehaviorTestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token).When(),
+                    AwaitCancelBehaviorTestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token).When()).ConfigureAwait(false);
             stopwatch.Stop();
 
             Assert.True(stopwatch.ElapsedMilliseconds > 500);
 
-            Assert.True(task1.IsCanceled);
+            Assert.Equal(3, whenAllResult.Whens.Length);
+
+            Assert.Single(whenAllResult.Canceled);
+
+            Assert.True(whenAllResult.When1.Task.IsCanceled);
 #if NET5_0
-            Assert.True(task2.IsCompletedSuccessfully);
-            Assert.True(task3.IsCompletedSuccessfully);
+            Assert.True(whenAllResult.When2.Task.IsCompletedSuccessfully);
+            Assert.True(whenAllResult.When3.Task.IsCompletedSuccessfully);
 #endif
-            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
+            cancellationTokenSource2.Cancel();
         }
 #endregion
 
@@ -136,36 +130,34 @@ namespace EifelMono.Tasks.Test
         [Fact]
         public async void Behavior_Await_Task_WhenAny_TaskDelayAsync()
         {
-            throw new NotImplementedException("Todo find solution to for WhenAny");
-            var behaviorOk = false;
             using var cancellationTokenSource1 = new CancellationTokenSource();
             using var cancellationTokenSource2 = new CancellationTokenSource();
             // Cancel 1 direct
             cancellationTokenSource1.Cancel();
-            var task1 = AwaitCancelBehaviorTestTasks.TaskDelayAsync(1, cancellationTokenSource1.Token);
-            var task2 = AwaitCancelBehaviorTestTasks.TaskDelayAsync(-1, cancellationTokenSource2.Token);
-            var task3 = AwaitCancelBehaviorTestTasks.TaskDelayAsync(-1, cancellationTokenSource2.Token);
-            var resultTask = await Task.WhenAny(task1, task2, task3).ConfigureAwait(false);
 
-            Assert.Equal(resultTask, task1);
-            Assert.True(task1.IsCanceled);
-            Assert.False(task2.IsCanceled);
-            Assert.False(task3.IsCanceled);
+            var stopwatch = Stopwatch.StartNew();
+            var whenAnyResult = await WhenAny.AwaitStatusAsync(
+                    AwaitCancelBehaviorTestTasks.TaskDelayAsync(1, cancellationTokenSource1.Token).When(),
+                    AwaitCancelBehaviorTestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token).When(),
+                    AwaitCancelBehaviorTestTasks.TaskDelayAsync(500, cancellationTokenSource2.Token).When()).ConfigureAwait(false);
+            stopwatch.Stop();
 
-            // Cancel 2 later
+            Assert.True(stopwatch.ElapsedMilliseconds < 500);
+
+            Assert.Equal(3, whenAnyResult.Whens.Length);
+
+            Assert.Single(whenAnyResult.Canceled);
+
+            Assert.True(whenAnyResult.When1.Task.IsCanceled);
+#if NET5_0
+            Assert.False(whenAnyResult.When2.Task.IsCompletedSuccessfully);
+            Assert.False(whenAnyResult.When3.Task.IsCompletedSuccessfully);
+#endif
             cancellationTokenSource2.Cancel();
-            await Task.Delay(100).ConfigureAwait(false);
-            Assert.True(task2.IsCanceled);
-            Assert.True(task3.IsCanceled);
-
-            if (task1.IsCanceled)
-                behaviorOk = true;
-
-            Assert.True(behaviorOk, AwaitCancelBehaviorTestTasks.BehaviorText(behaviorOk));
         }
-#endregion
+        #endregion
 
-#region DeepTaskTests
+        #region DeepTaskTests
         [Fact]
         public async void Behavior_Await_LevelTest_Cancel()
         {
