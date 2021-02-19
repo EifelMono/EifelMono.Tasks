@@ -7,12 +7,9 @@ namespace EifelMono.Tasks
     public static class WhenAll
     {
         public static async Task<AwaitStatusTaskWhenAll> AwaitStatusAsync(params Task[] tasks)
-        {
-            var awaitStatusTask = await Task.WhenAll(tasks).AwaitStatusAsync().ConfigureAwait(false);
-
-            return new AwaitStatusTaskWhenAll(awaitStatusTask, tasks.Select(task => task.AwaitStatusFromTask()).ToArray());
-        }
-
+            => new AwaitStatusTaskWhenAll(
+                await Task.WhenAll(tasks).AwaitStatusAsync().ConfigureAwait(false),
+                tasks.Select(task => task.AwaitStatusFromTask()).ToArray());
 
         public static async Task<AwaitStatusTaskWhenAll<W1, W2>> AwaitStatusAsync<W1, W2>(W1 when1, W2 when2)
             where W1 : AwaitStatusTask
