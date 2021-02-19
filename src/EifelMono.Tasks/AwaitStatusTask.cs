@@ -41,6 +41,9 @@ namespace EifelMono.Tasks
 
         protected AwaitStatus _awaitStatus { get; set; } = AwaitStatus.Unknown;
         public AwaitStatus AwaitStatus => GetAwaitStatus();
+
+        public override string ToString()
+            => $"{AwaitStatus}";
     }
 
 
@@ -101,7 +104,6 @@ namespace EifelMono.Tasks
     #endregion
 
     #region Multi (When)
-
     public class AwaitStatusTasks : AwaitStatusTask
     {
         public AwaitStatusTasks() : base()
@@ -120,8 +122,8 @@ namespace EifelMono.Tasks
         public AwaitStatusTask[] Canceled => Whens.Where(ast => ast.IsCanceled()).ToArray();
         public AwaitStatusTask[] Faulted => Whens.Where(ast => ast.IsFaulted()).ToArray();
     }
-    #region WhenAll
 
+    #region WhenAll
     public class AwaitStatusTaskWhenAll : AwaitStatusTasks
     {
         public AwaitStatusTaskWhenAll() : base()
@@ -133,7 +135,6 @@ namespace EifelMono.Tasks
         public AwaitStatusTaskWhenAll(AwaitStatusTaskWhenAll awaitStatusTaskWhenAll) : base(awaitStatusTaskWhenAll)
         {
         }
-
     }
 
     public class AwaitStatusTaskWhenAll<W1, W2> : AwaitStatusTaskWhenAll
@@ -202,6 +203,42 @@ namespace EifelMono.Tasks
         public W5 When5 { get; set; }
     }
 
+    public class AwaitStatusTaskWhenAll<W1, W2, W3, W4, W5, W6> : AwaitStatusTaskWhenAll<W1, W2, W3, W4, W5>
+       where W1 : AwaitStatusTask
+       where W2 : AwaitStatusTask
+       where W3 : AwaitStatusTask
+       where W4 : AwaitStatusTask
+       where W5 : AwaitStatusTask
+       where W6 : AwaitStatusTask
+    {
+        public AwaitStatusTaskWhenAll() : base()
+        {
+        }
+        public AwaitStatusTaskWhenAll(AwaitStatusTaskWhenAll awaitStatusTaskWhenAll) : base(awaitStatusTaskWhenAll)
+        {
+        }
+
+        public W6 When6 { get; set; }
+    }
+
+    public class AwaitStatusTaskWhenAll<W1, W2, W3, W4, W5, W6, W7> : AwaitStatusTaskWhenAll<W1, W2, W3, W4, W5, W6>
+        where W1 : AwaitStatusTask
+        where W2 : AwaitStatusTask
+        where W3 : AwaitStatusTask
+        where W4 : AwaitStatusTask
+        where W5 : AwaitStatusTask
+        where W6 : AwaitStatusTask
+        where W7 : AwaitStatusTask
+    {
+        public AwaitStatusTaskWhenAll() : base()
+        {
+        }
+        public AwaitStatusTaskWhenAll(AwaitStatusTaskWhenAll awaitStatusTaskWhenAll) : base(awaitStatusTaskWhenAll)
+        {
+        }
+
+        public W7 When7 { get; set; }
+    }
     #endregion
 
     #region WhenAny
@@ -293,6 +330,43 @@ namespace EifelMono.Tasks
         }
 
         public W5 When5 { get; set; }
+    }
+
+    public class AwaitStatusTaskWhenAny<W1, W2, W3, W4, W5, W6> : AwaitStatusTaskWhenAny<W1, W2, W3, W4, W5>
+       where W1 : AwaitStatusTask
+       where W2 : AwaitStatusTask
+       where W3 : AwaitStatusTask
+       where W4 : AwaitStatusTask
+       where W5 : AwaitStatusTask
+       where W6 : AwaitStatusTask
+    {
+        public AwaitStatusTaskWhenAny() : base()
+        {
+        }
+        public AwaitStatusTaskWhenAny(AwaitStatusTaskWhenAny awaitStatusTaskWhenAny) : base(awaitStatusTaskWhenAny)
+        {
+        }
+
+        public W6 When6 { get; set; }
+    }
+
+    public class AwaitStatusTaskWhenAny<W1, W2, W3, W4, W5, W6, W7> : AwaitStatusTaskWhenAny<W1, W2, W3, W4, W5, W6>
+        where W1 : AwaitStatusTask
+        where W2 : AwaitStatusTask
+        where W3 : AwaitStatusTask
+        where W4 : AwaitStatusTask
+        where W5 : AwaitStatusTask
+        where W6 : AwaitStatusTask
+        where W7 : AwaitStatusTask
+    {
+        public AwaitStatusTaskWhenAny() : base()
+        {
+        }
+        public AwaitStatusTaskWhenAny(AwaitStatusTaskWhenAny awaitStatusTaskWhenAny) : base(awaitStatusTaskWhenAny)
+        {
+        }
+
+        public W7 When7 { get; set; }
     }
     #endregion
     #endregion
