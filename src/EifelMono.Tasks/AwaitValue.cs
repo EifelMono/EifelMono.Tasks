@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace EifelMono.Tasks
 {
-    public class ObservableValue<T> : IDisposable
+    public class AwaitValue<T> : IDisposable
     {
-        public ObservableValue()
+        public AwaitValue()
         {
         }
 
-        public ObservableValue(T value)
+        public AwaitValue(T value)
         {
             _value = value;
         }

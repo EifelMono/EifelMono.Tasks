@@ -7,13 +7,13 @@ using Xunit;
 
 namespace EifelMono.Tasks.Test
 {
-    public class AwaitStatusTaskWhenAnyTests
+    public class AwaitStatusTaskWhenAllTests
     {
         #region When mutations
         [Fact]
-        public async void WhenAny_12()
+        public async void WhenAll_12()
         {
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.IntAsync(1).When(),
                 TestTasks.IntAsync(2).When());
             Assert.Equal(2, result.Whens.Length);
@@ -23,9 +23,9 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_123()
+        public async void WhenAll_123()
         {
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.IntAsync(1).When(),
                 TestTasks.IntAsync(2).When(),
                 TestTasks.IntAsync(3).When());
@@ -37,9 +37,9 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_1234()
+        public async void WhenAll_1234()
         {
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.IntAsync(1).When(),
                 TestTasks.IntAsync(2).When(),
                 TestTasks.IntAsync(3).When(),
@@ -53,9 +53,9 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_12345()
+        public async void WhenAll_12345()
         {
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.IntAsync(1).When(),
                 TestTasks.IntAsync(2).When(),
                 TestTasks.IntAsync(3).When(),
@@ -71,9 +71,9 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_123456()
+        public async void WhenAll_123456()
         {
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.IntAsync(1).When(),
                 TestTasks.IntAsync(2).When(),
                 TestTasks.IntAsync(3).When(),
@@ -91,9 +91,9 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_1234567()
+        public async void WhenAll_1234567()
         {
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.IntAsync(1).When(),
                 TestTasks.IntAsync(2).When(),
                 TestTasks.IntAsync(3).When(),
@@ -114,10 +114,10 @@ namespace EifelMono.Tasks.Test
         #endregion
 
         [Fact]
-        public async void WhenAny_Test_1()
+        public async void WhenAll_Test_1()
         {
             var stopwatch = Stopwatch.StartNew();
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.DelayAsync().When(),
                 TestTasks.IntAsync(1).When());
             stopwatch.Stop();
@@ -130,11 +130,11 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_Test_2()
+        public async void WhenAll_Test_2()
         {
             var stopwatch = Stopwatch.StartNew();
 
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1)).When(),
                 TestTasks.IntAsync(1).When());
             stopwatch.Stop();
@@ -147,11 +147,11 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_Test_3()
+        public async void WhenAll_Test_3()
         {
             var stopwatch = Stopwatch.StartNew();
 
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1)).When(),
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1)).When(),
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1)).When(),
@@ -169,14 +169,14 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_Test_4()
+        public async void WhenAll_Test_4()
         {
             var stopwatch = Stopwatch.StartNew();
 
             using var canellationTokenSource1 = new CancellationTokenSource();
             canellationTokenSource1.Cancel();
             using var canellationTokenSource2 = new CancellationTokenSource();
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1), canellationTokenSource1.Token).When(),
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1), canellationTokenSource1.Token).When(),
                 TestTasks.DelayAsync(TimeSpan.FromSeconds(1), canellationTokenSource1.Token).When(),
@@ -194,14 +194,14 @@ namespace EifelMono.Tasks.Test
         }
 
         [Fact]
-        public async void WhenAny_Test_5()
+        public async void WhenAll_Test_5()
         {
             var stopwatch = Stopwatch.StartNew();
 
             using var canellationTokenSource1 = new CancellationTokenSource();
             canellationTokenSource1.Cancel();
             using var canellationTokenSource2 = new CancellationTokenSource();
-            var result = await WhenAny.AwaitStatusAsync(
+            var result = await WhenAll.AwaitStatusAsync(
                 TestTasks.ThrowExceptionAsync(TimeSpan.FromSeconds(1)).When(),
                 TestTasks.ThrowOperationCancelExceptionAsync(TimeSpan.FromSeconds(1)).When(),
                 TestTasks.ThrowTaskCancelExceptionAsync(TimeSpan.FromSeconds(1)).When(),

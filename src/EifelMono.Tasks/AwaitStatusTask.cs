@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 namespace EifelMono.Tasks
 {
-
     // -------------------------------------------------------------------------
     // +-- AwaitStatusTaskBase
     // |    AWaitStatus
@@ -45,8 +44,6 @@ namespace EifelMono.Tasks
         public override string ToString()
             => $"{AwaitStatus}";
     }
-
-
 
     public class AwaitStatusTask : AwaitStatusTaskBase
     {
